@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
 // Define Chapter collection
 const chapterCollectionName = 'chapters'
@@ -18,14 +19,29 @@ const validateSchema = async (data) => {
 const createNew = async (data) => {
     try {
         const value = await validateSchema(data)
-        const number = await getDB().collection(chapterCollectionName).find({ comicID: value.comicID, _destroy: false }).count()
-        value.number = number + 1
         const result = await getDB().collection(chapterCollectionName).insertOne(value)
         return result
 
     } catch (error) {
-        console.log(error)
+        throw new Error(error)
     }
 }
 
-export const ChapterModel = { createNew }
+const update = async (id, data) => {
+    try {
+        const result = await getDB().collection(chapterCollectionName).findOneAndUpdate(
+            { _id: ObjectID(id) },
+            { $set: data },
+            { returnOriginal: false }
+        )
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const ChapterModel = {
+    createNew,
+    update
+}

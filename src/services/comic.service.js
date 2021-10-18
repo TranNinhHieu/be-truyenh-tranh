@@ -14,4 +14,20 @@ const createNew = async (data) => {
     }
 }
 
-export const ComicService = { createNew }
+const update = async (id, data) => {
+    try {
+        const updataData = {
+            ...data,
+            updateAt: Date.now()
+        }
+        const result = await ComicModel.update(id, updataData)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const ComicService = {
+    createNew,
+    update
+}

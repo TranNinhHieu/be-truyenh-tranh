@@ -3,11 +3,7 @@ import { HttpStatusCode } from '../utilities/constants'
 
 const createNew = async (req, res, next) => {
     const condition = Joi.object({
-        title: Joi.string().required().min(3).max(100).trim(),
-        description: Joi.string().default('Đang cập nhật'),
-        tagID: Joi.array().items(Joi.string()).required(),
-        thumbnail: Joi.string().required(),
-        author: Joi.string().default('Đang cập nhật')
+        name: Joi.string().required()
     })
     try {
         await condition.validateAsync(req.body, { abortEarly: false })
@@ -21,11 +17,7 @@ const createNew = async (req, res, next) => {
 
 const update = async (req, res, next) => {
     const condition = Joi.object({
-        title: Joi.string().min(3).max(100).trim(),
-        description: Joi.string().default('Đang cập nhật'),
-        tagID: Joi.array().items(Joi.string()),
-        thumbnail: Joi.string(),
-        author: Joi.string().default('Đang cập nhật')
+        name: Joi.string().trim()
     })
     try {
         await condition.validateAsync(req.body, {
@@ -40,6 +32,7 @@ const update = async (req, res, next) => {
     }
 }
 
-export const ComicValidation = {
-    createNew, update
+export const TagValidation = {
+    createNew,
+    update
 }
