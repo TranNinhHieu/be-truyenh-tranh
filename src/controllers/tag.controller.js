@@ -1,9 +1,9 @@
-import { ComicService } from '../services/comic.service'
+import { TagService } from '../services/tag.service'
 import { HttpStatusCode } from '../utilities/constants'
 
 const createNew = async (req, res) => {
     try {
-        const result = await ComicService.createNew(req.body)
+        const result = await TagService.createNew(req.body)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
@@ -16,7 +16,7 @@ const createNew = async (req, res) => {
 const update = async (req, res) => {
     try {
         const { id } = req.params
-        const result = await ComicService.update(id, req.body)
+        const result = await TagService.update(id, req.body)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
@@ -26,7 +26,7 @@ const update = async (req, res) => {
     }
 }
 
-export const ComicController = {
+export const TagController = {
     createNew,
     update
 }

@@ -1,10 +1,11 @@
 import Joi from 'joi'
+import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
 // Define Comic collection
 const comicCollectionName = 'comics'
 const comicCollectionSchema = Joi.object({
     number: Joi.number().default(0),
-    title: Joi.string().required().min(3).max(100),
+    title: Joi.string().required().min(3).max(100).trim(),
     description: Joi.string().default('Đang cập nhật'),
     tagID: Joi.array().items(Joi.string()).required(),
     thumbnail: Joi.string().required(),
@@ -31,4 +32,21 @@ const createNew = async (data) => {
     }
 }
 
-export const ComicModel = { createNew }
+const update = async (id, data) => {
+    try {
+        const result = await getDB().collection(comicCollectionName).findOneAndUpdate(
+            { _id: ObjectID(id) },
+            { $set: data },
+            { returnOriginal: false }
+        )
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+export const ComicModel = {
+    createNew,
+    update
+}
