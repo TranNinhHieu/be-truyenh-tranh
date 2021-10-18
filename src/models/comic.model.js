@@ -23,13 +23,11 @@ const validateSchema = async (data) => {
 const createNew = async (data) => {
     try {
         const value = await validateSchema(data)
-        const number = await getDB().collection(comicCollectionName).count()
-        value.number = number + 1
         const result = await getDB().collection(comicCollectionName).insertOne(value)
         return result
 
     } catch (error) {
-        console.log(error)
+        throw new Error(error)
     }
 }
 
