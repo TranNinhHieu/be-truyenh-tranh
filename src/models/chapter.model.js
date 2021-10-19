@@ -41,7 +41,35 @@ const update = async (id, data) => {
     }
 }
 
+const getAllChapterOfComic = async (comicID) => {
+    try {
+        const result = await getDB().collection(chapterCollectionName).find(
+            { comicID: comicID, _destroy: false },
+            { projection: { chap: 1, createAt: 1, updateAt: 1 } }
+        ).toArray()
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getFullChapter = async (id) => {
+    try {
+        const result = await getDB().collection(chapterCollectionName).findOne(
+            { _id: ObjectID(id), _destroy: false },
+            { projection: { comicID: 1, chap: 1, image: 1 } }
+        )
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ChapterModel = {
     createNew,
-    update
+    update,
+    getAllChapterOfComic,
+    getFullChapter
 }

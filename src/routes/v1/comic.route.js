@@ -10,4 +10,11 @@ router.route('/')
 router.route('/:id')
     .put(ComicValidation.update, ComicController.update)
 
+router.route('/tag/:tagID')
+    .get(ComicController.getAllComicOfTag)
+router.route('/detail/:id')
+    .get(ComicController.getDetailComic)
+router.route('/:page')
+    .get(ComicController.getComic)
+
 export const comicRoutes = router
