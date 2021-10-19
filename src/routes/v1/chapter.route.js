@@ -10,4 +10,8 @@ router.route('/')
 router.route('/:id')
     .put(ChapterValidation.update, ChapterController.update)
 
+router.route('/comic/:comicID')
+    .get(ChapterController.getAllChapterOfComic)
+router.route('/:id')
+    .get(ChapterController.getFullChapter)
 export const chapterRoutes = router

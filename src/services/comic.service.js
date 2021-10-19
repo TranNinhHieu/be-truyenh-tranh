@@ -27,7 +27,37 @@ const update = async (id, data) => {
     }
 }
 
+const getComic = async (page) => {
+    try {
+        const result = await ComicModel.getComic(page)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getDetailComic = async (id) => {
+    try {
+        const result = await ComicModel.getDetailComic(id)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getAllComicOfTag = async (tagID) => {
+    try {
+        const result = await ComicModel.getAllComicOfTag(tagID)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ComicService = {
     createNew,
-    update
+    update,
+    getComic,
+    getDetailComic,
+    getAllComicOfTag
 }

@@ -5,6 +5,7 @@ import { getDB } from '../config/mongodb'
 const tagCollectionName = 'tags'
 const tagCollectionSchema = Joi.object({
     name: Joi.string().required().min(3).max(100).trim(),
+    comicID: Joi.array().items(Joi.string()).default([]),
     _destroy: Joi.boolean().default(false)
 })
 
@@ -38,7 +39,31 @@ const update = async (id, data) => {
     }
 }
 
+const getTagOfComic = async (comicID) => {
+    try {
+
+        const result = await getDB().collection(tagCollectionName).find({ comicID: comicID, _destroy: false }, { projection: { name: 1 } }).toArray()
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getAllTag = async () => {
+    try {
+
+        const result = await getDB().collection(tagCollectionName).find({ _destroy: false }, { projection: { name: 1 } }).toArray()
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const TagModel = {
     createNew,
-    update
+    update,
+    getTagOfComic,
+    getAllTag
 }

@@ -10,4 +10,8 @@ router.route('/')
 router.route('/:id')
     .put(TagValidation.update, TagController.update)
 
+router.route('/comic/:comicID')
+    .get(TagController.getTagOfComic)
+router.route('/')
+    .get(TagController.getAllTag)
 export const tagRoutes = router

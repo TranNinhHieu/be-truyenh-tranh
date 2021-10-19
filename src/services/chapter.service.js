@@ -27,7 +27,27 @@ const update = async (id, data) => {
     }
 }
 
+const getAllChapterOfComic = async (comicID) => {
+    try {
+        const result = await ChapterModel.getAllChapterOfComic(comicID)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getFullChapter = async (id) => {
+    try {
+        const result = await ChapterModel.getFullChapter(id)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ChapterService = {
     createNew,
-    update
+    update,
+    getAllChapterOfComic,
+    getFullChapter
 }
