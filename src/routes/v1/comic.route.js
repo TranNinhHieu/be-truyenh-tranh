@@ -10,10 +10,12 @@ router.route('/')
 router.route('/:id')
     .put(ComicValidation.update, ComicController.update)
 
-router.route('/tag/:tagID')
+router.route('/tag')
     .get(ComicController.getAllComicOfTag)
 router.route('/detail/:id')
     .get(ComicController.getDetailComic)
+router.route('/quantity-page')
+    .get(ComicController.getQuantityPage)
 router.route('/:page')
     .get(ComicController.getComic)
 
