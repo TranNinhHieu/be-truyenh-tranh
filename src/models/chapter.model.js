@@ -45,8 +45,8 @@ const getAllChapterOfComic = async (comicID) => {
     try {
         const result = await getDB().collection(chapterCollectionName).find(
             { comicID: comicID, _destroy: false },
-            { projection: { chap: 1, createAt: 1, updateAt: 1 } }
-        ).toArray()
+            { projection: { comicID: 1, chap: 1, createAt: 1, updateAt: 1 } }
+        ).sort({ chap: 1 }).toArray()
         return result
 
     } catch (error) {
@@ -54,12 +54,20 @@ const getAllChapterOfComic = async (comicID) => {
     }
 }
 
-const getFullChapter = async (id) => {
+const getFullChapter = async (comicID, id) => {
     try {
-        const result = await getDB().collection(chapterCollectionName).findOne(
-            { _id: ObjectID(id), _destroy: false },
-            { projection: { comicID: 1, chap: 1, image: 1 } }
-        )
+        const [chapter, comic] = await Promise.all([
+            await getDB().collection(chapterCollectionName).findOne(
+                { _id: ObjectID(id), _destroy: false },
+                { projection: { chap: 1, image: 1 } }
+            ),
+            await getDB().collection('comics').findOne(
+                { _id: ObjectID(comicID), _destroy: false },
+                { projection: { _id: 0, number: 1, title: 1 } }
+            )])
+
+        const result = { ...chapter, ...comic }
+
         return result
 
     } catch (error) {

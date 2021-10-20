@@ -41,8 +41,8 @@ const getAllChapterOfComic = async (req, res) => {
 
 const getFullChapter = async (req, res) => {
     try {
-        const { id } = req.params
-        const result = await ChapterService.getFullChapter(id)
+        const { comicID, id } = req.query
+        const result = await ChapterService.getFullChapter(comicID, id)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {

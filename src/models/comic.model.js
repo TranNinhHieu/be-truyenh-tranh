@@ -54,7 +54,8 @@ const getComic = async (page) => {
             .project({
                 number: 1,
                 title: 1,
-                thumbnail: 1
+                thumbnail: 1,
+                createAt: 1
             })
             .sort({ createAt: -1 }).toArray()
         const begin = (page - 1)*12
@@ -69,29 +70,46 @@ const getComic = async (page) => {
 
 const getDetailComic = async (id) => {
     try {
-        const result = await getDB().collection(comicCollectionName)
-            .findOne(
-                {
-                    _id: ObjectID(id),
-                    _destroy: false
-                },
-                { projection: { title: 1, description: 1, thumbnail: 1, author: 1, status: 1, views: 1, createAt: 1 } })
+        const [ob1, tags] = await Promise.all([
+            await getDB().collection(comicCollectionName)
+                .findOne(
+                    {
+                        _id: ObjectID(id),
+                        _destroy: false
+                    },
+                    { projection: { title: 1, description: 1, thumbnail: 1, author: 1, status: 1, views: 1, createAt: 1 } }),
+            await getDB().collection('tags').find(
+                { comicID: id, _destroy: false }, { projection: { name: 1 } }).toArray()])
+        const result = { ...ob1, tags }
         return result
     } catch (error) {
         throw new Error(error)
     }
 }
 
-const getAllComicOfTag = async (tagID) => {
+const getAllComicOfTag = async (tagID, page) => {
     try {
-        const result = await getDB().collection(comicCollectionName)
+        const listComic = await getDB().collection(comicCollectionName)
             .find(
                 {
                     tagID: tagID,
                     _destroy: false
                 },
                 { projection: { title: 1, thumbnail: 1 } }).sort({ createNew: -1 }).toArray()
+        const begin = (page-1)*12
+        const end = page*12
+        const result = listComic.slice(begin, end)
         return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getQuantityPage = async () => {
+    try {
+        const listComic = await getDB().collection(comicCollectionName).find({ _destroy: false }).count()
+        const page = Math.ceil(listComic/12)
+        return page
     } catch (error) {
         throw new Error(error)
     }
@@ -101,5 +119,6 @@ export const ComicModel = {
     update,
     getComic,
     getDetailComic,
-    getAllComicOfTag
+    getAllComicOfTag,
+    getQuantityPage
 }

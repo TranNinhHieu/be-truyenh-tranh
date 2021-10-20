@@ -36,9 +36,9 @@ const getAllChapterOfComic = async (comicID) => {
     }
 }
 
-const getFullChapter = async (id) => {
+const getFullChapter = async (comicID, id) => {
     try {
-        const result = await ChapterModel.getFullChapter(id)
+        const result = await ChapterModel.getFullChapter(comicID, id)
         return result
     } catch (error) {
         throw new Error(error)
