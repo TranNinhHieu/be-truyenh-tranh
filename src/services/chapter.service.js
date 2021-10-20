@@ -36,9 +36,18 @@ const getAllChapterOfComic = async (comicID) => {
     }
 }
 
-const getFullChapter = async (comicID, id) => {
+const getFullChapter = async (comicID, chap) => {
     try {
-        const result = await ChapterModel.getFullChapter(comicID, id)
+        const result = await ChapterModel.getFullChapter(comicID, chap)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getQuantityChapter = async (comicID) => {
+    try {
+        const result = await ChapterModel.getQuantityChapter(comicID)
         return result
     } catch (error) {
         throw new Error(error)
@@ -49,5 +58,6 @@ export const ChapterService = {
     createNew,
     update,
     getAllChapterOfComic,
-    getFullChapter
+    getFullChapter,
+    getQuantityChapter
 }

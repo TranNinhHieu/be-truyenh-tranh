@@ -41,8 +41,21 @@ const getAllChapterOfComic = async (req, res) => {
 
 const getFullChapter = async (req, res) => {
     try {
-        const { comicID, id } = req.query
-        const result = await ChapterService.getFullChapter(comicID, id)
+        const { comicID, chap } = req.query
+        const result = await ChapterService.getFullChapter(comicID, chap)
+
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const getQuantityChapter = async (req, res) => {
+    try {
+        const { comicID } = req.params
+        const result = await ChapterService.getQuantityChapter(comicID)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
@@ -56,5 +69,6 @@ export const ChapterController = {
     createNew,
     update,
     getAllChapterOfComic,
-    getFullChapter
+    getFullChapter,
+    getQuantityChapter
 }
