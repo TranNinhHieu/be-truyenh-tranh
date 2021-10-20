@@ -8,5 +8,6 @@ export const HttpStatusCode = {
 
 export const WHITELIST_DOMAINS = [
     'http://localhost:8080',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'https://comic-riverdev-api.herokuapp.com'
 ]
