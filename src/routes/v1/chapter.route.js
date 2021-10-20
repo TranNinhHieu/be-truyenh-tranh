@@ -14,4 +14,6 @@ router.route('/comic/:comicID')
     .get(ChapterController.getAllChapterOfComic)
 router.route('/')
     .get(ChapterController.getFullChapter)
+router.route('/quantity/:comicID')
+    .get(ChapterController.getQuantityChapter)
 export const chapterRoutes = router
