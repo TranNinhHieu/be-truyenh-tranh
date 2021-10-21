@@ -68,7 +68,8 @@ const getAllComicOfTag = async (req, res) => {
 const getQuantityPage = async (req, res) => {
     try {
 
-        const result = await ComicService.getQuantityPage()
+        const { tagID } = req.query
+        const result = await ComicService.getQuantityPage(tagID)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {

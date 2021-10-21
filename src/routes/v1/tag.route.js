@@ -12,6 +12,8 @@ router.route('/:id')
 
 router.route('/comic/:comicID')
     .get(TagController.getTagOfComic)
+router.route('/:id')
+    .get(TagController.getDetailTag)
 router.route('/')
     .get(TagController.getAllTag)
 export const tagRoutes = router

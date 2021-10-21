@@ -48,9 +48,21 @@ const getAllTag = async () => {
     }
 }
 
+const getDetailTag = async (id) => {
+    try {
+        const result = await TagModel.getDetailTag(id)
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+
 export const TagService = {
     createNew,
     update,
     getTagOfComic,
-    getAllTag
+    getAllTag,
+    getDetailTag
 }

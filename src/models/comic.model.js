@@ -95,7 +95,7 @@ const getAllComicOfTag = async (tagID, page) => {
                     tagID: tagID,
                     _destroy: false
                 },
-                { projection: { title: 1, thumbnail: 1 } }).sort({ createNew: -1 }).toArray()
+                { projection: { number: 1, title: 1, thumbnail: 1, createAt: 1 } }).sort({ createAt: -1 }).toArray()
         const begin = (page-1)*12
         const end = page*12
         const result = listComic.slice(begin, end)
@@ -105,11 +105,23 @@ const getAllComicOfTag = async (tagID, page) => {
     }
 }
 
-const getQuantityPage = async () => {
+const getQuantityPage = async (tagID) => {
     try {
-        const listComic = await getDB().collection(comicCollectionName).find({ _destroy: false }).count()
-        const page = Math.ceil(listComic/12)
-        return page
+
+        let quantity = 0
+        if (tagID === undefined) {
+            const listComic = await getDB().collection(comicCollectionName).find({ _destroy: false }).count()
+            quantity = Math.ceil(listComic/12)
+        } else {
+            if (tagID == 0) {
+                const listComic = await getDB().collection(comicCollectionName).find({ tagID: '616af71268f59ad44354b30f', _destroy: false }).count()
+                quantity = Math.ceil(listComic/12)
+            } else {
+                const listComic = await getDB().collection(comicCollectionName).find({ tagID: tagID, _destroy: false }).count()
+                quantity = Math.ceil(listComic/12)
+            }
+        }
+        return quantity
     } catch (error) {
         throw new Error(error)
     }

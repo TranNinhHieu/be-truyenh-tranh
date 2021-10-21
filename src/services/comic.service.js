@@ -54,9 +54,9 @@ const getAllComicOfTag = async (tagID, page) => {
     }
 }
 
-const getQuantityPage = async () => {
+const getQuantityPage = async (tagID) => {
     try {
-        const result = await ComicModel.getQuantityPage()
+        const result = await ComicModel.getQuantityPage(tagID)
         return result
     } catch (error) {
         throw new Error(error)

@@ -61,9 +61,21 @@ const getAllTag = async () => {
     }
 }
 
+const getDetailTag = async (id) => {
+    try {
+
+        const result = await getDB().collection(tagCollectionName).findOne({ _id: ObjectID(id), _destroy: false }, { projection: { _id: 0, name: 1 } })
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const TagModel = {
     createNew,
     update,
     getTagOfComic,
-    getAllTag
+    getAllTag,
+    getDetailTag
 }
