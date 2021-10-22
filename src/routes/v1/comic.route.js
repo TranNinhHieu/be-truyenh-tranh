@@ -16,6 +16,8 @@ router.route('/detail/:id')
     .get(ComicController.getDetailComic)
 router.route('/quantity-page')
     .get(ComicController.getQuantityPage)
+router.route('/new-comics')
+    .get(ComicController.getNewComics)
 router.route('/:page')
     .get(ComicController.getComic)
 
