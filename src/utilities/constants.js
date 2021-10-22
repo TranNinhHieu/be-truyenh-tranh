@@ -9,5 +9,7 @@ export const HttpStatusCode = {
 export const WHITELIST_DOMAINS = [
     'http://localhost:8080',
     'http://localhost:3000',
+    'https://comic-riverdev-web.web.app',
+    'https://comic-riverdev-web.firebaseapp.com',
     'https://comic-riverdev-api.herokuapp.com'
 ]
