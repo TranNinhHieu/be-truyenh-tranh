@@ -79,6 +79,18 @@ const getQuantityPage = async (req, res) => {
     }
 }
 
+const getNewComics = async (req, res) => {
+    try {
+
+        const result = await ComicService.getNewComics()
+
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
 
 export const ComicController = {
     createNew,
@@ -86,5 +98,6 @@ export const ComicController = {
     getComic,
     getDetailComic,
     getAllComicOfTag,
-    getQuantityPage
+    getQuantityPage,
+    getNewComics
 }
