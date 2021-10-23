@@ -127,38 +127,11 @@ const getQuantityPage = async (tagID) => {
     }
 }
 
-const getNewComics = async () => {
-    try {
-        const result = await getDB().collection(comicCollectionName).aggregate([
-            {
-                $lookup: {
-                    from: 'chapters',
-                    pipeline: [
-                        { $match: { _destroy: false } },
-                        { $sort: { chap: -1 } },
-                        { $limit: 1 },
-                        { $project: { _id: 0, chap: 1 } }
-                    ],
-                    as: 'chapter'
-                }
-            },
-            { $sort: { updateAt: -1 }
-            },
-            { $project: { number: 1, title: 1, thumbnail: 1, author: 1, chapter: 1, updateAt: 1 } },
-            { $limit: 10 }
-        ]).toArray()
-        return result
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-
 export const ComicModel = {
     createNew,
     update,
     getComic,
     getDetailComic,
     getAllComicOfTag,
-    getQuantityPage,
-    getNewComics
+    getQuantityPage
 }

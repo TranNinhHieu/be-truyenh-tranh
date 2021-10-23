@@ -65,10 +65,24 @@ const getQuantityChapter = async (req, res) => {
     }
 }
 
+const getNewComics = async (req, res) => {
+    try {
+
+        const result = await ChapterService.getNewComics()
+
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
 export const ChapterController = {
     createNew,
     update,
     getAllChapterOfComic,
     getFullChapter,
-    getQuantityChapter
+    getQuantityChapter,
+    getNewComics
 }

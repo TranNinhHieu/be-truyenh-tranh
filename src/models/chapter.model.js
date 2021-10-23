@@ -88,10 +88,40 @@ const getQuantityChapter = async (comicID) => {
     }
 }
 
+const getNewComics = async () => {
+    try {
+        const result = await getDB().collection(chapterCollectionName).aggregate([
+            {
+                $lookup: {
+                    from: 'comics',
+                    let: { comic:{ $toObjectId: '$comicID' }, destroy: '$_destroy' },
+                    pipeline: [
+                        { $match: {
+                            $expr: { $eq: ['$_id', '$$comic'] },
+                            _destroy: false
+                        }
+                        },
+                        { $project: { _id: 0, number: 1, title: 1, author: 1 } }
+                    ],
+                    as: 'comicInfo'
+                }
+            },
+            { $unwind: { path: '$comicInfo', preserveNullAndEmptyArrays: true } },
+            { $project: { comicID: 1, chap: 1, createAt: 1, comicInfo: 1 } },
+            { $sort: { createAt: -1, chap: -1 } },
+            { $limit: 10 }
+        ]).toArray()
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ChapterModel = {
     createNew,
     update,
     getAllChapterOfComic,
     getFullChapter,
-    getQuantityChapter
+    getQuantityChapter,
+    getNewComics
 }
