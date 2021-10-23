@@ -54,10 +54,21 @@ const getQuantityChapter = async (comicID) => {
     }
 }
 
+const getNewComics = async () => {
+    try {
+        const result = await ChapterModel.getNewComics()
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+
 export const ChapterService = {
     createNew,
     update,
     getAllChapterOfComic,
     getFullChapter,
-    getQuantityChapter
+    getQuantityChapter,
+    getNewComics
 }

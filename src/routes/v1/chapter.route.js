@@ -12,8 +12,10 @@ router.route('/:id')
 
 router.route('/comic/:comicID')
     .get(ChapterController.getAllChapterOfComic)
-router.route('/')
-    .get(ChapterController.getFullChapter)
+router.route('/new-comics')
+    .get(ChapterController.getNewComics)
 router.route('/quantity/:comicID')
     .get(ChapterController.getQuantityChapter)
+router.route('/')
+    .get(ChapterController.getFullChapter)
 export const chapterRoutes = router
