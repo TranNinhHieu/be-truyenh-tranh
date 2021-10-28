@@ -41,7 +41,6 @@ const refreshToken = async (req, res) => {
 
     const refreshTokenFromClient = req.body.refreshToken
     const token = await TokenModel.getRefreshToken(refreshTokenFromClient)
-    console.log(token)
     if (token === true) {
         try {
             const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, env.REFRESH_TOKEN_SECRET)
@@ -49,12 +48,11 @@ const refreshToken = async (req, res) => {
             const userData = decoded.data
 
             const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
-            console.log(accessToken)
             await TokenModel.update(refreshTokenFromClient, accessToken)
 
             return res.status(200).json({ accessToken })
         } catch (error) {
-
+            await TokenModel.remove(refreshTokenFromClient)
             res.status(403).json({
                 message: 'Invalid refresh token.'
             })
