@@ -19,12 +19,21 @@ const validateSchema = async (data) => {
     return await userCollectionSchema.validateAsync(data, { abortEarly: false })
 }
 
+const createNew = async (data) => {
+    try {
+        const value = await validateSchema(data)
+        const result = await getDB().collection(userCollectionName).insertOne(value)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+
+}
 const login = async (data) => {
     try {
 
         let user = await getDB().collection(userCollectionName).findOne(
             { email: data.email, _destroy: false })
-
         if (!user) return null
         const isMatch = await bcrypt.compare(data.password, user.password)
         if (!isMatch)
@@ -51,5 +60,6 @@ const getFullUser = async (id) => {
 }
 export const UserModel = {
     login,
-    getFullUser
+    getFullUser,
+    createNew
 }

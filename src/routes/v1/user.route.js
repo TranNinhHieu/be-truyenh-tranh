@@ -7,6 +7,8 @@ const router = express.Router()
 
 router.route('/login')
     .post(UserValidation.login, UserController.login)
+router.route('/google-login')
+    .post(UserController.googleLogin)
 router.route('/refresh-token')
     .post(UserController.refreshToken)
 router.route('/logout')
