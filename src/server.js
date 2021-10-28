@@ -23,7 +23,11 @@ const bootServer = () => {
         cors({
             credentials: true,
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-            origin: process.env.NODE_ENV === 'production' ? 'https://comic-riverdev-api.herokuapp.com' : 'http://localhost:3000'
+            origin: [
+                'https://comic-riverdev-api.herokuapp.com',
+                'http://localhost:3000',
+                'https://comic-riverdev-web.web.app',
+                'http://localhost:8080']
         })
     )
 
