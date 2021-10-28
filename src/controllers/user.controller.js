@@ -2,7 +2,10 @@ import { UserService } from '../services/user.service'
 import { HttpStatusCode } from '../utilities/constants'
 import { env } from '../config/enviroment'
 import { jwtHelper } from '../helpers/jwt.helper'
-import { TokenModel } from '../models/token.model'
+import { OAuth2Client } from 'google-auth-library'
+import bcrypt from 'bcrypt'
+
+const client = new OAuth2Client(env.GOOGLE_CLIENT_ID)
 
 const login = async (req, res) => {
     try {
@@ -12,9 +15,14 @@ const login = async (req, res) => {
                 const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
                 const refreshToken = await jwtHelper.generateToken(userData, env.REFRESH_TOKEN_SECRET, env.REFRESH_TOKEN_LIFE)
 
-                const token = await TokenModel.createNew(refreshToken, accessToken)
-                if (token)
-                    return res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
+                res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true,
+                    path: '/v1/user/refresh-token',
+                    maxAge: 30*24*60*60*1000,
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                    secure: process.env.NODE_ENV === 'production' ? true : false
+                })
+                res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
             } catch (error) {
                 return res.status(HttpStatusCode.INTERNAL_SERVER).json(error)
             }
@@ -40,19 +48,17 @@ const login = async (req, res) => {
 const refreshToken = async (req, res) => {
 
     const refreshTokenFromClient = req.body.refreshToken || req.query.refreshToken
-    const token = await TokenModel.getRefreshToken(refreshTokenFromClient)
-    if (token === true) {
+    const token = req.cookies.refreshToken
+    if (token === refreshTokenFromClient) {
         try {
             const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, env.REFRESH_TOKEN_SECRET)
 
             const userData = decoded.data
 
             const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
-            await TokenModel.update(refreshTokenFromClient, accessToken)
 
             return res.status(200).json({ accessToken })
         } catch (error) {
-            await TokenModel.remove(refreshTokenFromClient)
             res.status(403).json({
                 message: 'Invalid refresh token.'
             })
@@ -78,19 +84,75 @@ const getFullUser = async (req, res) => {
 }
 
 const logout = async (req, res) => {
-    const refreshTokenFromClient = req.body.refreshToken
     try {
-        await TokenModel.remove(refreshTokenFromClient)
+        res.clearCookie('refreshToken', { path: '/v1/user/refresh-token' })
         res.status(HttpStatusCode.OK).json({ message: 'Logged out!' })
     } catch (error) {
-        res.status(HttpStatusCode.INTERNAL_SERVER).json({ errors: error.message })
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({ message: error.message })
     }
-
 }
 
+const googleLogin = async (req, res) => {
+
+    const { tokenId } = req.body
+    const verify = await client.verifyIdToken({ idToken: tokenId, audience: env.GOOGLE_CLIENT_ID })
+    const { email_verified, email, name, picture } = verify.payload
+
+    const password = email + env.GOOGLE_SECRET
+    const passwordHash = await bcrypt.hash(password, 12)
+
+    if (!email_verified) return res.status(400).json({ message: 'Email verification failed.' })
+
+    let data = ({ email: email, password: password })
+
+    try {
+        let userData = await UserService.login(data)
+        if (userData !== null && userData !== undefined) {
+            try {
+                const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
+                const refreshToken = await jwtHelper.generateToken(userData, env.REFRESH_TOKEN_SECRET, env.REFRESH_TOKEN_LIFE)
+
+                res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true,
+                    path: '/v1/user/refresh-token',
+                    maxAge: 30*24*60*60*1000,
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                    secure: process.env.NODE_ENV === 'production' ? true : false
+                })
+                res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
+            } catch (error) {
+                return res.status(HttpStatusCode.INTERNAL_SERVER).json(error)
+            }
+        } else {
+            data = ({ name: name, email: email, password: passwordHash, avatar: picture })
+            await UserService.createNew(data)
+            userData = await UserService.checkExist(email)
+            try {
+                const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
+                const refreshToken = await jwtHelper.generateToken(userData, env.REFRESH_TOKEN_SECRET, env.REFRESH_TOKEN_LIFE)
+
+                res.cookie('refreshToken', refreshToken, {
+                    httpOnly: true,
+                    path: '/v1/user/refresh-token',
+                    maxAge: 30*24*60*60*1000,
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                    secure: process.env.NODE_ENV === 'production' ? true : false
+                })
+                res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
+            } catch (error) {
+                return res.status(HttpStatusCode.INTERNAL_SERVER).json(error)
+            }
+        }
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
 export const UserController = {
     login,
     refreshToken,
     getFullUser,
+    googleLogin,
     logout
 }
