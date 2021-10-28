@@ -9,6 +9,8 @@ router.route('/login')
     .post(UserValidation.login, UserController.login)
 router.route('/refresh-token')
     .post(UserController.refreshToken)
+router.route('/logout')
+    .get(UserController.logout)
 router.route('/:id')
     .get(AuthMiddleware.isAuth, UserController.getFullUser)
 export const userRoutes = router

@@ -2,8 +2,7 @@ import { UserService } from '../services/user.service'
 import { HttpStatusCode } from '../utilities/constants'
 import { env } from '../config/enviroment'
 import { jwtHelper } from '../helpers/jwt.helper'
-
-let tokenList = {}
+import { TokenModel } from '../models/token.model'
 
 const login = async (req, res) => {
     try {
@@ -13,7 +12,7 @@ const login = async (req, res) => {
                 const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
                 const refreshToken = await jwtHelper.generateToken(userData, env.REFRESH_TOKEN_SECRET, env.REFRESH_TOKEN_LIFE)
 
-                tokenList[refreshToken] = { accessToken, refreshToken }
+                await TokenModel.createNew(refreshToken, accessToken)
 
                 return res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
             } catch (error) {
@@ -41,14 +40,17 @@ const login = async (req, res) => {
 const refreshToken = async (req, res) => {
 
     const refreshTokenFromClient = req.body.refreshToken
-
-    if (refreshTokenFromClient && (tokenList[refreshTokenFromClient])) {
+    const token = await TokenModel.getRefreshToken(refreshTokenFromClient)
+    console.log(token)
+    if (token === true) {
         try {
             const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, env.REFRESH_TOKEN_SECRET)
 
-            const userFakeData = decoded.data
+            const userData = decoded.data
 
-            const accessToken = await jwtHelper.generateToken(userFakeData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
+            const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
+            console.log(accessToken)
+            await TokenModel.update(refreshTokenFromClient, accessToken)
 
             return res.status(200).json({ accessToken })
         } catch (error) {
@@ -77,8 +79,20 @@ const getFullUser = async (req, res) => {
     }
 }
 
+const logout = async (req, res) => {
+    const refreshTokenFromClient = req.body.refreshToken
+    try {
+        await TokenModel.remove(refreshTokenFromClient)
+        res.status(HttpStatusCode.OK).json({ message: 'Logged out!' })
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({ errors: error.message })
+    }
+
+}
+
 export const UserController = {
     login,
     refreshToken,
-    getFullUser
+    getFullUser,
+    logout
 }
