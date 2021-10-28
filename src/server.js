@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { corsOptions } from './config/cors'
+// import { corsOptions } from './config/cors'
 import { connectDB } from './config/mongodb'
 import { env } from './config/enviroment'
 import { apiV1 } from './routes/v1'
@@ -17,7 +17,14 @@ const bootServer = () => {
 
     const app = express()
 
-    app.use(cors(corsOptions))
+    // app.use(cors(corsOptions))
+    app.use(
+        cors({
+            credentials: true,
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            origin: process.env.NODE_ENV === 'production' ? 'https://comic-riverdev-web.web.app' : 'http://localhost:8080'
+        })
+    )
 
     // Enable req.body data
     app.use(express.json())
