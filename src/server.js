@@ -3,7 +3,6 @@ import cors from 'cors'
 import { connectDB } from './config/mongodb'
 import { env } from './config/enviroment'
 import { apiV1 } from './routes/v1'
-import cookieParser from 'cookie-parser'
 
 connectDB()
     .then(() => console.log('Connected successfully to database server!'))
@@ -16,8 +15,6 @@ connectDB()
 const bootServer = () => {
 
     const app = express()
-    app.set('trust proxy', 1)
-    app.use(cookieParser())
 
     app.use(
         cors({
