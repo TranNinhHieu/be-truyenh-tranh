@@ -22,7 +22,7 @@ const bootServer = () => {
         cors({
             credentials: true,
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-            origin: process.env.NODE_ENV === 'production' ? 'https://comic-riverdev-web.web.app' : 'http://localhost:8080'
+            origin: process.env.NODE_ENV === 'production' ? 'https://comic-riverdev-web.web.app' : 'http://localhost:3000'
         })
     )
 

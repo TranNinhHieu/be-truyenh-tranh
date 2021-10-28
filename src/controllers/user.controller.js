@@ -12,21 +12,21 @@ const login = async (req, res) => {
                 const accessToken = await jwtHelper.generateToken(userData, env.ACCESS_TOKEN_SECRET, env.ACCESS_TOKEN_LIFE)
                 const refreshToken = await jwtHelper.generateToken(userData, env.REFRESH_TOKEN_SECRET, env.REFRESH_TOKEN_LIFE)
 
-                await TokenModel.createNew(refreshToken, accessToken)
-
-                return res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
+                const token = await TokenModel.createNew(refreshToken, accessToken)
+                if (token)
+                    return res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
             } catch (error) {
                 return res.status(HttpStatusCode.INTERNAL_SERVER).json(error)
             }
         }
 
         if (userData === null)
-            return res.status(HttpStatusCode.UNAUTHORIZED).json({
+            return res.status(HttpStatusCode.BAD_REQUEST).json({
                 error: true,
                 message: 'Email does not exist!'
             })
         if (userData === undefined)
-            return res.status(HttpStatusCode.UNAUTHORIZED).json({
+            return res.status(HttpStatusCode.BAD_REQUEST).json({
                 error: true,
                 message: 'Username or Password is Wrong.'
             })
@@ -39,7 +39,7 @@ const login = async (req, res) => {
 
 const refreshToken = async (req, res) => {
 
-    const refreshTokenFromClient = req.body.refreshToken
+    const refreshTokenFromClient = req.body.refreshToken || req.query.refreshToken
     const token = await TokenModel.getRefreshToken(refreshTokenFromClient)
     if (token === true) {
         try {
