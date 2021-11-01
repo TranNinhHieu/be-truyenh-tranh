@@ -4,6 +4,7 @@ import { env } from '../config/enviroment'
 import { jwtHelper } from '../helpers/jwt.helper'
 import { OAuth2Client } from 'google-auth-library'
 import bcrypt from 'bcrypt'
+import { UserModel } from '../models/user.model'
 
 const client = new OAuth2Client(env.GOOGLE_CLIENT_ID)
 
@@ -148,10 +149,80 @@ const googleLogin = async (req, res) => {
         })
     }
 }
+
+const update = async (req, res) => {
+    try {
+        const { userID } = req.params
+        const data = {
+            ...req.body,
+            updateAt: Date.now()
+        }
+        const result = await UserModel.update(userID, data)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const likeStatus = async (req, res) => {
+    try {
+        const { userID, comicID } = req.query
+        const result = await UserModel.likeStatus(userID, comicID)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const followStatus = async (req, res) => {
+    try {
+        const { userID, comicID } = req.query
+        const result = await UserModel.followStatus(userID, comicID)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const updateLikeComic = async (req, res) => {
+    try {
+        const { userID, comicID } = req.query
+        const result = await UserModel.updateLikeComic(userID, comicID)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const updateFollowComic = async (req, res) => {
+    try {
+        const { userID, comicID } = req.query
+        const result = await UserModel.updateFollowComic(userID, comicID)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
 export const UserController = {
     login,
     refreshToken,
     getFullUser,
     googleLogin,
-    logout
+    logout,
+    update,
+    likeStatus,
+    followStatus,
+    updateLikeComic,
+    updateFollowComic
 }
