@@ -10,6 +10,8 @@ const userCollectionSchema = Joi.object({
     password: Joi.string().required().min(8).trim(),
     avatar: Joi.string().default(''),
     isAdmin: Joi.boolean().default(false),
+    like: Joi.array().items(Joi.string()).default([]),
+    follow: Joi.array().items(Joi.string()).default([]),
     createAt: Joi.date().timestamp().default(Date.now()),
     updateAt: Joi.date().timestamp().default(null),
     _destroy: Joi.boolean().default(false)
@@ -29,6 +31,21 @@ const createNew = async (data) => {
     }
 
 }
+
+const update = async (id, data) => {
+    try {
+        const result = await getDB().collection(userCollectionName).findOneAndUpdate(
+            { _id: ObjectID(id) },
+            { $set: data },
+            { returnOriginal: false }
+        )
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+
+}
+
 const login = async (data) => {
     try {
 
@@ -58,8 +75,98 @@ const getFullUser = async (id) => {
         throw new Error(error)
     }
 }
+
+const likeStatus = async (userID, comicID) => {
+    try {
+        const result = await getDB().collection(userCollectionName).findOne({
+            _id: ObjectID(userID),
+            like: comicID,
+            _destroy: false
+        })
+        if (result)
+            return true
+        else
+            return false
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const followStatus = async (userID, comicID) => {
+    try {
+        const result = await getDB().collection(userCollectionName).findOne({
+            _id: ObjectID(userID),
+            follow: comicID,
+            _destroy: false
+        })
+        if (result)
+            return true
+        else
+            return false
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const updateLikeComic = async (userID, comicID) => {
+    try {
+        let result = null
+        const checkExist = await getDB().collection(userCollectionName).findOne({
+            _id: ObjectID(userID),
+            like: comicID,
+            _destroy: false
+        })
+        if (checkExist)
+            result = await getDB().collection(userCollectionName).findOneAndUpdate(
+                { _id: ObjectID(userID), _destroy: false },
+                { $pull: { like: comicID } },
+                { returnOriginal: false }
+            )
+        else
+            result = await getDB().collection(userCollectionName).findOneAndUpdate(
+                { _id: ObjectID(userID), _destroy: false },
+                { $push: { like: comicID } },
+                { returnOriginal: false }
+            )
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const updateFollowComic = async (userID, comicID) => {
+    try {
+        let result = null
+        const checkExist = await getDB().collection(userCollectionName).findOne({
+            _id: ObjectID(userID),
+            follow: comicID,
+            _destroy: false
+        })
+        if (checkExist)
+            result = await getDB().collection(userCollectionName).findOneAndUpdate(
+                { _id: ObjectID(userID), _destroy: false },
+                { $pull: { follow: comicID } },
+                { returnOriginal: false }
+            )
+        else
+            result = await getDB().collection(userCollectionName).findOneAndUpdate(
+                { _id: ObjectID(userID), _destroy: false },
+                { $push: { follow: comicID } },
+                { returnOriginal: false }
+            )
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const UserModel = {
     login,
     getFullUser,
-    createNew
+    createNew,
+    update,
+    likeStatus,
+    followStatus,
+    updateLikeComic,
+    updateFollowComic
 }

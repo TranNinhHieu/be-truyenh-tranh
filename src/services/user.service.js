@@ -40,6 +40,7 @@ const checkExist = async (email) => {
         throw new Error(error)
     }
 }
+
 export const UserService = {
     login,
     getFullUser,
