@@ -1,5 +1,7 @@
 import express from 'express'
 import cors from 'cors'
+import { Server } from 'socket.io'
+import { createServer } from 'http'
 import { connectDB } from './config/mongodb'
 import { env } from './config/enviroment'
 import { apiV1 } from './routes/v1'
@@ -38,7 +40,32 @@ const bootServer = () => {
     // Use APIs v1
     app.use('/v1', apiV1)
 
-    app.listen(env.APP_PORT || process.env.PORT, () => {
+    const httpServer = createServer(app)
+    const io = new Server(httpServer, {
+        cors: {
+            credentials: true,
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+            origin: [
+                'https://comic-riverdev-api.herokuapp.com',
+                'http://localhost:3000',
+                'https://comic-riverdev-web.web.app',
+                'http://localhost:8080']
+        }
+    })
+
+    httpServer.listen(env.APP_PORT || process.env.PORT, () => {
         console.log(`Hello river, I'm running at port: ${process.env.PORT}/`)
+    })
+
+    io.on('connection', (socket) => {
+
+        console.log('someone has connected!')
+        socket.on('disconnect', () => {
+            console.log('someone has left!')
+        })
+
+        socket.on('client-like-comic', (data) => {
+            socket.emit('server-like-comic', data)
+        })
     })
 }
