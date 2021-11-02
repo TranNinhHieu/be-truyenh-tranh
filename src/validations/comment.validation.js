@@ -5,7 +5,7 @@ const postComment = async (req, res, next) => {
     const condition = Joi.object({
         comicID: Joi.string().required(),
         userID: Joi.string().required(),
-        content: Joi.string().required().min(1)
+        content: Joi.string().required().min(1).trim()
     })
     try {
         await condition.validateAsync(req.body, { abortEarly: false })
@@ -19,9 +19,7 @@ const postComment = async (req, res, next) => {
 
 const updateComment = async (req, res, next) => {
     const condition = Joi.object({
-        comicID: Joi.string().required(),
-        userID: Joi.string().required(),
-        content: Joi.string().required().min(1)
+        content: Joi.string().required().min(1).trim()
     })
     try {
         await condition.validateAsync(req.body, {
