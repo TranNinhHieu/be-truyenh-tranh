@@ -80,7 +80,7 @@ const likeStatus = async (userID, comicID) => {
     try {
         const result = await getDB().collection(userCollectionName).findOne({
             _id: ObjectID(userID),
-            like: comicID,
+            like: ObjectID(comicID),
             _destroy: false
         })
         if (result)
@@ -96,7 +96,7 @@ const followStatus = async (userID, comicID) => {
     try {
         const result = await getDB().collection(userCollectionName).findOne({
             _id: ObjectID(userID),
-            follow: comicID,
+            follow: ObjectID(comicID),
             _destroy: false
         })
         if (result)
@@ -113,19 +113,19 @@ const updateLikeComic = async (userID, comicID) => {
         let result = null
         const checkExist = await getDB().collection(userCollectionName).findOne({
             _id: ObjectID(userID),
-            like: comicID,
+            like: ObjectID(comicID),
             _destroy: false
         })
         if (checkExist)
             result = await getDB().collection(userCollectionName).findOneAndUpdate(
                 { _id: ObjectID(userID), _destroy: false },
-                { $pull: { like: comicID } },
+                { $pull: { like: ObjectID(comicID) } },
                 { returnOriginal: false }
             )
         else
             result = await getDB().collection(userCollectionName).findOneAndUpdate(
                 { _id: ObjectID(userID), _destroy: false },
-                { $push: { like: comicID } },
+                { $push: { like: ObjectID(comicID) } },
                 { returnOriginal: false }
             )
         return result
@@ -139,22 +139,94 @@ const updateFollowComic = async (userID, comicID) => {
         let result = null
         const checkExist = await getDB().collection(userCollectionName).findOne({
             _id: ObjectID(userID),
-            follow: comicID,
+            follow: ObjectID(comicID),
             _destroy: false
         })
         if (checkExist)
             result = await getDB().collection(userCollectionName).findOneAndUpdate(
                 { _id: ObjectID(userID), _destroy: false },
-                { $pull: { follow: comicID } },
+                { $pull: { follow: ObjectID(comicID) } },
                 { returnOriginal: false }
             )
         else
             result = await getDB().collection(userCollectionName).findOneAndUpdate(
                 { _id: ObjectID(userID), _destroy: false },
-                { $push: { follow: comicID } },
+                { $push: { follow: ObjectID(comicID) } },
                 { returnOriginal: false }
             )
         return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getLikedComics = async (userID) => {
+    try {
+        const userData = await getDB().collection(userCollectionName).aggregate([
+            { $match: { _id: ObjectID(userID), _destroy: false } },
+            { $unwind: { path: '$like' } },
+            { $project: { _id: 0, like: 1 } },
+            {
+                $lookup: {
+                    from: 'comics',
+                    let: { liked: '$like' },
+                    pipeline: [
+                        { $match:
+                            { $expr:
+                                { $and:
+                                    [
+                                        { $eq: [ '$_id', '$$liked'] },
+                                        { $eq : [ '$_destroy', false] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $project: { _id: 1, number: 1, title: 1, thumbnail: 1, createAt: 1 } }
+                    ],
+                    as: 'liked'
+                }
+            }, {
+                $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$liked', 0 ] }, '$$ROOT' ] } }
+            },
+            { $project: { liked: 0, like: 0 } }
+        ]).toArray()
+        return userData
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getFollowedComics = async (userID) => {
+    try {
+        const userData = await getDB().collection(userCollectionName).aggregate([
+            { $match: { _id: ObjectID(userID), _destroy: false } },
+            { $unwind: { path: '$follow' } },
+            { $project: { _id: 0, follow: 1 } },
+            {
+                $lookup: {
+                    from: 'comics',
+                    let: { followed: '$follow' },
+                    pipeline: [
+                        { $match:
+                            { $expr:
+                                { $and:
+                                    [
+                                        { $eq: [ '$_id', '$$followed'] },
+                                        { $eq : [ '$_destroy', false] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $project: { _id: 1, number: 1, title: 1, thumbnail: 1, createAt: 1 } }
+                    ],
+                    as: 'followed'
+                }
+            }, {
+                $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$followed', 0 ] }, '$$ROOT' ] } }
+            },
+            { $project: { followed: 0, follow: 0 } }
+        ]).toArray()
+        return userData
     } catch (error) {
         throw new Error(error)
     }
@@ -168,5 +240,7 @@ export const UserModel = {
     likeStatus,
     followStatus,
     updateLikeComic,
-    updateFollowComic
+    updateFollowComic,
+    getLikedComics,
+    getFollowedComics
 }

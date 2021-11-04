@@ -214,6 +214,30 @@ const updateFollowComic = async (req, res) => {
     }
 }
 
+const getLikedComics = async (req, res) => {
+    try {
+        const { userID } = req.query
+        const result = await UserService.getLikedComics(userID)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const getFollowedComics = async (req, res) => {
+    try {
+        const { userID } = req.query
+        const result = await UserService.getFollowedComics(userID)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
 export const UserController = {
     login,
     refreshToken,
@@ -224,5 +248,7 @@ export const UserController = {
     likeStatus,
     followStatus,
     updateLikeComic,
-    updateFollowComic
+    updateFollowComic,
+    getLikedComics,
+    getFollowedComics
 }
