@@ -41,9 +41,29 @@ const checkExist = async (email) => {
     }
 }
 
+const getLikedComics = async (userID) => {
+    try {
+        const result = await UserModel.getLikedComics(userID)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getFollowedComics = async (userID) => {
+    try {
+        const result = await UserModel.getFollowedComics(userID)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const UserService = {
     login,
     getFullUser,
     checkExist,
-    createNew
+    createNew,
+    getLikedComics,
+    getFollowedComics
 }
