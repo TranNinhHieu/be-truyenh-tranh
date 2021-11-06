@@ -127,11 +127,52 @@ const getQuantityPage = async (tagID) => {
     }
 }
 
+const getFollownLike = async (comicID) => {
+    try {
+        const follow = await getDB().collection(comicCollectionName).aggregate([
+            { $match: { _id: ObjectID(comicID), _destroy: false } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: 'follow',
+                    as: 'quantity'
+                }
+            }, {
+                $unwind: '$quantity'
+            }
+        ]).toArray()
+
+        const like = await getDB().collection(comicCollectionName).aggregate([
+            { $match: { _destroy: false } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: 'like',
+                    as: 'quantity'
+                }
+            }, {
+                $unwind: '$quantity'
+            }
+        ]).toArray()
+
+        const comment = await getDB().collection('comments').find({
+            comicID: ObjectID(comicID)
+        }).count()
+
+        return { likes: like.length, follows: follow.length, comments: comment }
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ComicModel = {
     createNew,
     update,
     getComic,
     getDetailComic,
     getAllComicOfTag,
-    getQuantityPage
+    getQuantityPage,
+    getFollownLike
 }

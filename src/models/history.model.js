@@ -40,16 +40,18 @@ const getHistory = async (userID, page) => {
                     from: 'comics',
                     localField: 'comicID',
                     foreignField: '_id',
-                    as: 'thumbnail'
+                    as: 'image'
                 }
             },
-            { $unwind: '$thumbnail' },
-            { $project: { userID: 1, comicID: 1, chap: 1, createAt: 1, 'thumbnail.thumbnail': 1, 'thumbnail.number': 1 } }
+            {
+                $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$image', 0 ] }, '$$ROOT' ] } }
+            },
+            { $project: { image: 0, description: 0, tagID: 0, author: 0, status: 0, views: 0, createAt: 0, updateAt: 0, _destroy: 0 } }
         ]).sort({ createAt: -1 }).toArray()
         const begin = (page-1)*24
         const end = page*24
         const result = history.slice(begin, end)
-        return result
+        return { comics: result, quatitypage:  Math.ceil(history.length/12) }
     } catch (error) {
         throw new Error
     }
