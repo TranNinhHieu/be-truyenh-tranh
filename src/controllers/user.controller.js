@@ -216,8 +216,8 @@ const updateFollowComic = async (req, res) => {
 
 const getLikedComics = async (req, res) => {
     try {
-        const { userID } = req.query
-        const result = await UserService.getLikedComics(userID)
+        const { userID, page } = req.query
+        const result = await UserService.getLikedComics(userID, page)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -228,8 +228,32 @@ const getLikedComics = async (req, res) => {
 
 const getFollowedComics = async (req, res) => {
     try {
+        const { userID, page } = req.query
+        const result = await UserService.getFollowedComics(userID, page)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const getQuantityPageLikedComics = async (req, res) => {
+    try {
         const { userID } = req.query
-        const result = await UserService.getFollowedComics(userID)
+        const result = await UserService.getQuantityPageLikedComics(userID)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const getQuantityPageFollowedComics = async (req, res) => {
+    try {
+        const { userID } = req.query
+        const result = await UserService.getQuantityPageFollowedComics(userID)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -250,5 +274,7 @@ export const UserController = {
     updateLikeComic,
     updateFollowComic,
     getLikedComics,
-    getFollowedComics
+    getFollowedComics,
+    getQuantityPageFollowedComics,
+    getQuantityPageLikedComics
 }
