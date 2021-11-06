@@ -272,8 +272,8 @@ const getQuantityPageLikedComics = async (userID) => {
                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$liked', 0 ] }, '$$ROOT' ] } }
             },
             { $project: { liked: 0, like: 0 } }
-        ]).count()
-        quantity = Math.ceil(result/12)
+        ]).toArray()
+        quantity = Math.ceil(result.length/12)
         return quantity
 
     } catch (error) {
@@ -311,9 +311,9 @@ const getQuantityPageFollowedComics = async (userID) => {
                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$followed', 0 ] }, '$$ROOT' ] } }
             },
             { $project: { followed: 0, follow: 0 } }
-        ]).count()
+        ]).toArray()
 
-        quantity = Math.ceil(result/12)
+        quantity = Math.ceil(result.length/12)
         return quantity
 
 
