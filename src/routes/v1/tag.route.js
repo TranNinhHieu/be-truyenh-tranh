@@ -9,9 +9,6 @@ router.route('/')
 
 router.route('/:id')
     .put(TagValidation.update, TagController.update)
-
-router.route('/comic/:comicID')
-    .get(TagController.getTagOfComic)
 router.route('/:id')
     .get(TagController.getDetailTag)
 router.route('/')

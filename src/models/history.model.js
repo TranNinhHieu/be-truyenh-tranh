@@ -22,7 +22,8 @@ const addHistory = async (data) => {
         const insertValue = {
             ...validatedValue,
             comicID: ObjectID(validatedValue.comicID),
-            userID: ObjectID(validatedValue.userID)
+            userID: ObjectID(validatedValue.userID),
+            createAt: Date.now()
         }
         const result = await getDB().collection(historyCollectionName).insertOne(insertValue)
         return result

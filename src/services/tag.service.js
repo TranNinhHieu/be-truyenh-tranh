@@ -28,16 +28,6 @@ const update = async (id, data) => {
     }
 }
 
-const getTagOfComic = async (comicID) => {
-    try {
-        const result = await TagModel.getTagOfComic(comicID)
-        return result
-
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-
 const getAllTag = async () => {
     try {
         const result = await TagModel.getAllTag()
@@ -62,7 +52,6 @@ const getDetailTag = async (id) => {
 export const TagService = {
     createNew,
     update,
-    getTagOfComic,
     getAllTag,
     getDetailTag
 }

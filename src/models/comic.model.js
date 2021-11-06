@@ -24,7 +24,13 @@ const validateSchema = async (data) => {
 const createNew = async (data) => {
     try {
         const value = await validateSchema(data)
-        const result = await getDB().collection(comicCollectionName).insertOne(value)
+        const tagID = value.tagID.map(tag => ObjectID(tag))
+        const valueValidated = {
+            ...value,
+            tagID: tagID,
+            createAt: Date.now()
+        }
+        const result = await getDB().collection(comicCollectionName).insertOne(valueValidated)
         return result
 
     } catch (error) {
@@ -70,18 +76,20 @@ const getComic = async (page) => {
 
 const getDetailComic = async (id) => {
     try {
-        const [ob1, tags] = await Promise.all([
-            await getDB().collection(comicCollectionName)
-                .findOne(
-                    {
-                        _id: ObjectID(id),
-                        _destroy: false
-                    },
-                    { projection: { title: 1, description: 1, thumbnail: 1, author: 1, status: 1, views: 1, createAt: 1 } }),
-            await getDB().collection('tags').find(
-                { comicID: id, _destroy: false }, { projection: { name: 1 } }).toArray()])
-        const result = { ...ob1, tags }
-        return result
+        const comic = await getDB().collection(comicCollectionName).aggregate([
+            { $match: { _id: ObjectID(id), _destroy: false } },
+            { $project: { number: 0, updateAt: 0, _destroy: 0 } },
+            {
+                $lookup: {
+                    from: 'tags',
+                    localField: 'tagID',
+                    foreignField: '_id',
+                    as: 'tags'
+                }
+            },
+            { $project: { tagID: 0 } }
+        ]).toArray()
+        return comic[0]
     } catch (error) {
         throw new Error(error)
     }
@@ -92,7 +100,7 @@ const getAllComicOfTag = async (tagID, page) => {
         const listComic = await getDB().collection(comicCollectionName)
             .find(
                 {
-                    tagID: tagID,
+                    tagID: ObjectID(tagID),
                     _destroy: false
                 },
                 { projection: { number: 1, title: 1, thumbnail: 1, createAt: 1 } }).sort({ createAt: -1 }).toArray()
@@ -114,10 +122,10 @@ const getQuantityPage = async (tagID) => {
             quantity = Math.ceil(listComic/12)
         } else {
             if (tagID == 0) {
-                const listComic = await getDB().collection(comicCollectionName).find({ tagID: '616af71268f59ad44354b30f', _destroy: false }).count()
+                const listComic = await getDB().collection(comicCollectionName).find({ tagID: ObjectID('616af71268f59ad44354b30f'), _destroy: false }).count()
                 quantity = Math.ceil(listComic/12)
             } else {
-                const listComic = await getDB().collection(comicCollectionName).find({ tagID: tagID, _destroy: false }).count()
+                const listComic = await getDB().collection(comicCollectionName).find({ tagID: ObjectID(tagID), _destroy: false }).count()
                 quantity = Math.ceil(listComic/12)
             }
         }

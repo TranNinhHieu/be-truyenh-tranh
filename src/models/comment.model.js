@@ -21,7 +21,9 @@ const postComment = async (data) => {
         const insertValue = {
             ...validatedValue,
             comicID: ObjectID(validatedValue.comicID),
-            userID: ObjectID(validatedValue.userID)
+            userID: ObjectID(validatedValue.userID),
+            createAt: Date.now(),
+            updateAt: Date.now()
         }
         const result = await getDB().collection(commentCollectionName).insertOne(insertValue)
         return result
@@ -66,8 +68,8 @@ const getComments = async (comicID, page) => {
                 }
             },
             { $unwind: '$user' },
-            { $project: { userID: 1, content: 1, 'user.name': 1, 'user.avatar': 1, updateAt: 1 } },
-            { $sort: { updateAt: -1 } }
+            { $project: { userID: 1, content: 1, 'user.name': 1, 'user.avatar': 1, createAt: 1 } },
+            { $sort: { createAt: -1 } }
         ]).toArray()
         const begin = (page - 1)*12
         const end = page*12
