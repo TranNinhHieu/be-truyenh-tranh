@@ -41,18 +41,36 @@ const checkExist = async (email) => {
     }
 }
 
-const getLikedComics = async (userID) => {
+const getLikedComics = async (userID, page) => {
     try {
-        const result = await UserModel.getLikedComics(userID)
+        const result = await UserModel.getLikedComics(userID, page)
         return result
     } catch (error) {
         throw new Error(error)
     }
 }
 
-const getFollowedComics = async (userID) => {
+const getFollowedComics = async (userID, page) => {
     try {
-        const result = await UserModel.getFollowedComics(userID)
+        const result = await UserModel.getFollowedComics(userID, page)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getQuantityPageLikedComics = async (userID) => {
+    try {
+        const result = await UserModel.getQuantityPageLikedComics(userID)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getQuantityPageFollowedComics = async (userID) => {
+    try {
+        const result = await UserModel.getQuantityPageFollowedComics(userID)
         return result
     } catch (error) {
         throw new Error(error)
@@ -65,5 +83,7 @@ export const UserService = {
     checkExist,
     createNew,
     getLikedComics,
-    getFollowedComics
+    getFollowedComics,
+    getQuantityPageFollowedComics,
+    getQuantityPageLikedComics
 }

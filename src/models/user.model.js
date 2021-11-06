@@ -160,7 +160,7 @@ const updateFollowComic = async (userID, comicID) => {
     }
 }
 
-const getLikedComics = async (userID) => {
+const getLikedComics = async (userID, page) => {
     try {
         const userData = await getDB().collection(userCollectionName).aggregate([
             { $match: { _id: ObjectID(userID), _destroy: false } },
@@ -190,13 +190,17 @@ const getLikedComics = async (userID) => {
             },
             { $project: { liked: 0, like: 0 } }
         ]).toArray()
-        return userData
+
+        const begin = (page-1)*12
+        const end = page*12
+        const result = userData.slice(begin, end)
+        return result
     } catch (error) {
         throw new Error(error)
     }
 }
 
-const getFollowedComics = async (userID) => {
+const getFollowedComics = async (userID, page) => {
     try {
         const userData = await getDB().collection(userCollectionName).aggregate([
             { $match: { _id: ObjectID(userID), _destroy: false } },
@@ -226,7 +230,93 @@ const getFollowedComics = async (userID) => {
             },
             { $project: { followed: 0, follow: 0 } }
         ]).toArray()
-        return userData
+
+        const begin = (page-1)*12
+        const end = page*12
+        const result = userData.slice(begin, end)
+        return result
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getQuantityPageLikedComics = async (userID) => {
+    try {
+
+        let quantity = 0
+        const result = await getDB().collection(userCollectionName).aggregate([
+            { $match: { _id: ObjectID(userID), _destroy: false } },
+            { $unwind: { path: '$like' } },
+            { $project: { _id: 0, like: 1 } },
+            {
+                $lookup: {
+                    from: 'comics',
+                    let: { liked: '$like' },
+                    pipeline: [
+                        { $match:
+                            { $expr:
+                                { $and:
+                                    [
+                                        { $eq: [ '$_id', '$$liked'] },
+                                        { $eq : [ '$_destroy', false] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $project: { _id: 1, number: 1, title: 1, thumbnail: 1, createAt: 1 } }
+                    ],
+                    as: 'liked'
+                }
+            }, {
+                $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$liked', 0 ] }, '$$ROOT' ] } }
+            },
+            { $project: { liked: 0, like: 0 } }
+        ]).count()
+        quantity = Math.ceil(result/12)
+        return quantity
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const getQuantityPageFollowedComics = async (userID) => {
+    try {
+        let quantity = 0
+        const result = await getDB().collection(userCollectionName).aggregate([
+            { $match: { _id: ObjectID(userID), _destroy: false } },
+            { $unwind: { path: '$follow' } },
+            { $project: { _id: 0, follow: 1 } },
+            {
+                $lookup: {
+                    from: 'comics',
+                    let: { followed: '$follow' },
+                    pipeline: [
+                        { $match:
+                            { $expr:
+                                { $and:
+                                    [
+                                        { $eq: [ '$_id', '$$followed'] },
+                                        { $eq : [ '$_destroy', false] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $project: { _id: 1, number: 1, title: 1, thumbnail: 1, createAt: 1 } }
+                    ],
+                    as: 'followed'
+                }
+            }, {
+                $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$followed', 0 ] }, '$$ROOT' ] } }
+            },
+            { $project: { followed: 0, follow: 0 } }
+        ]).count()
+
+        quantity = Math.ceil(result/12)
+        return quantity
+
+
     } catch (error) {
         throw new Error(error)
     }
@@ -242,5 +332,7 @@ export const UserModel = {
     updateLikeComic,
     updateFollowComic,
     getLikedComics,
-    getFollowedComics
+    getFollowedComics,
+    getQuantityPageFollowedComics,
+    getQuantityPageLikedComics
 }
