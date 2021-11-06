@@ -63,11 +63,21 @@ const getQuantityPage = async (tagID) => {
     }
 }
 
+const getFollownLike = async (comicID) => {
+    try {
+        const result = await ComicModel.getFollownLike(comicID)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ComicService = {
     createNew,
     update,
     getComic,
     getDetailComic,
     getAllComicOfTag,
-    getQuantityPage
+    getQuantityPage,
+    getFollownLike
 }
