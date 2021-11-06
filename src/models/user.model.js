@@ -24,7 +24,11 @@ const validateSchema = async (data) => {
 const createNew = async (data) => {
     try {
         const value = await validateSchema(data)
-        const result = await getDB().collection(userCollectionName).insertOne(value)
+        const valueValidated = {
+            ...value,
+            createAt: Date.now()
+        }
+        const result = await getDB().collection(userCollectionName).insertOne(valueValidated)
         return result
     } catch (error) {
         throw new Error(error)

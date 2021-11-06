@@ -26,19 +26,6 @@ const update = async (req, res) => {
     }
 }
 
-const getTagOfComic = async (req, res) => {
-    try {
-        const { comicID } = req.params
-        const result = await TagService.getTagOfComic(comicID)
-
-        res.status(HttpStatusCode.OK).json(result)
-    } catch (error) {
-        res.status(HttpStatusCode.INTERNAL_SERVER).json({
-            errors: error.message
-        })
-    }
-}
-
 const getAllTag = async (req, res) => {
     try {
         const result = await TagService.getAllTag()
@@ -68,7 +55,6 @@ const getDetailTag = async (req, res) => {
 export const TagController = {
     createNew,
     update,
-    getTagOfComic,
     getAllTag,
     getDetailTag
 }
