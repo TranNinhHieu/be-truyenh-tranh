@@ -1,11 +1,12 @@
+import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
 import { HistoryModel } from '../models/history.model'
 
 const addHistory = async (data) => {
     try {
         const checkExist = await getDB().collection('histories').findOne({
-            userID: data.userID,
-            comicID: data.comicID,
+            userID: ObjectID(data.userID),
+            comicID: ObjectID(data.comicID),
             chap: data.chap
         })
         if (checkExist)
