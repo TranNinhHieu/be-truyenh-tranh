@@ -152,7 +152,7 @@ const getFollownLike = async (comicID) => {
         ]).toArray()
 
         const like = await getDB().collection(comicCollectionName).aggregate([
-            { $match: { _destroy: false } },
+            { $match: { _id: ObjectID(comicID), _destroy: false } },
             {
                 $lookup: {
                     from: 'users',
