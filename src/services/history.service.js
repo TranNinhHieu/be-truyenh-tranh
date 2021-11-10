@@ -7,7 +7,7 @@ const addHistory = async (data) => {
         const checkExist = await getDB().collection('histories').findOne({
             userID: ObjectID(data.userID),
             comicID: ObjectID(data.comicID),
-            chap: data.chap
+            chap: data.chap*1
         })
         if (checkExist)
             return null
