@@ -73,7 +73,7 @@ const getFullUser = async (id) => {
     try {
         const userData = await getDB().collection(userCollectionName).findOne(
             { _id: ObjectID(id), _destroy: false },
-            { projection: { name: 1, email: 1, avatar: 1 } } )
+            { projection: { name: 1, email: 1, avatar: 1, isAdmin: 1 } } )
         return userData
     } catch (error) {
         throw new Error(error)

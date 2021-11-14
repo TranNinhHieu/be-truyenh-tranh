@@ -105,7 +105,7 @@ const getNewComics = async () => {
                             _destroy: false
                         }
                         },
-                        { $project: { _id: 0, number: 1, title: 1, author: 1 } }
+                        { $project: { _id: 0, number: 1, title: 1, author: 1, thumbnail: 1 } }
                     ],
                     as: 'comicInfo'
                 }

@@ -90,6 +90,18 @@ const getFollownLike = async (req, res) => {
         })
     }
 }
+
+const getUnfinishedComics = async (req, res) => {
+    try {
+        const result = await ComicService.getUnfinishedComics()
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
 export const ComicController = {
     createNew,
     update,
@@ -97,5 +109,6 @@ export const ComicController = {
     getDetailComic,
     getAllComicOfTag,
     getQuantityPage,
-    getFollownLike
+    getFollownLike,
+    getUnfinishedComics
 }
