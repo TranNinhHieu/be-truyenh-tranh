@@ -67,7 +67,8 @@ const getComic = async (page) => {
         const begin = (page - 1)*12
         const end = page*12
         const result = listComic.slice(begin, end)
-        return result
+
+        return { comics: result, quantityComic: listComic.length }
 
     } catch (error) {
         throw new Error(error)
@@ -175,6 +176,18 @@ const getFollownLike = async (comicID) => {
     }
 }
 
+const getUnfinishedComics = async () => {
+    try {
+        const result = getDB().collection(comicCollectionName).find({
+            status: 'Chưa hoàn thành',
+            _destroy: false
+        }, { projection: { number: 1, title: 1, thumbnail: 1, createAt: 1 } }).sort({ createAt: -1 }).toArray()
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ComicModel = {
     createNew,
     update,
@@ -182,5 +195,6 @@ export const ComicModel = {
     getDetailComic,
     getAllComicOfTag,
     getQuantityPage,
-    getFollownLike
+    getFollownLike,
+    getUnfinishedComics
 }

@@ -1,14 +1,16 @@
 import express from 'express'
 import { ChapterController } from '../../controllers/chapter.controller'
+import { AuthMiddleware } from '../../middlewares/auth.middleware'
+import { RoleMiddleware } from '../../middlewares/role.middleware'
 import { ChapterValidation } from '../../validations/chapter.validation'
 
 const router = express.Router()
 
 router.route('/')
-    .post(ChapterValidation.createNew, ChapterController.createNew)
+    .post(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ChapterValidation.createNew, ChapterController.createNew)
 
 router.route('/:id')
-    .put(ChapterValidation.update, ChapterController.update)
+    .put(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ChapterValidation.update, ChapterController.update)
 
 router.route('/comic/:comicID')
     .get(ChapterController.getAllChapterOfComic)

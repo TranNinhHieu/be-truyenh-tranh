@@ -72,6 +72,15 @@ const getFollownLike = async (comicID) => {
     }
 }
 
+const getUnfinishedComics = async () => {
+    try {
+        const result = await ComicModel.getUnfinishedComics()
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ComicService = {
     createNew,
     update,
@@ -79,5 +88,6 @@ export const ComicService = {
     getDetailComic,
     getAllComicOfTag,
     getQuantityPage,
-    getFollownLike
+    getFollownLike,
+    getUnfinishedComics
 }
