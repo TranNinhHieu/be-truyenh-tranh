@@ -79,7 +79,7 @@ const getDetailComic = async (id) => {
     try {
         const comic = await getDB().collection(comicCollectionName).aggregate([
             { $match: { _id: ObjectID(id), _destroy: false } },
-            { $project: { number: 0, updateAt: 0, _destroy: 0 } },
+            { $project: { updateAt: 0, _destroy: 0 } },
             {
                 $lookup: {
                     from: 'tags',
