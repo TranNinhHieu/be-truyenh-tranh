@@ -6,7 +6,7 @@ import { ChapterValidation } from '../../validations/chapter.validation'
 
 const router = express.Router()
 
-router.route('/')
+router.route('/:role')
     .post(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ChapterValidation.createNew, ChapterController.createNew)
 
 router.route('/:id')

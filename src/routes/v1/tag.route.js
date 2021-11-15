@@ -6,7 +6,7 @@ import { TagValidation } from '../../validations/tag.validation'
 
 const router = express.Router()
 
-router.route('/')
+router.route('/:role')
     .post(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, TagValidation.createNew, TagController.createNew)
 
 router.route('/:id')

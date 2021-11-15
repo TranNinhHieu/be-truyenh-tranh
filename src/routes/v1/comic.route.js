@@ -7,7 +7,7 @@ import { ComicValidation } from '../../validations/comic.validation'
 
 const router = express.Router()
 
-router.route('/')
+router.route('/:role')
     .post(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ComicValidation.createNew, ComicController.createNew)
 router.route('/:id')
     .put(ComicValidation.update, ComicController.update)
