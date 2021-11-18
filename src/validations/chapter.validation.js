@@ -4,6 +4,7 @@ import { HttpStatusCode } from '../utilities/constants'
 const createNew = async (req, res, next) => {
     const condition = Joi.object({
         comicID: Joi.string().required(),
+        chap: Joi.number().default(0),
         image: Joi.array().items(Joi.string()).required()
     })
     try {

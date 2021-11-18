@@ -1,5 +1,6 @@
 import { ComicModel } from '../models/comic.model'
 import { getDB } from '../config/mongodb'
+import { formatViToEn, titleCase } from '../utilities/formatData'
 
 const comicCollectionName = 'comics'
 
@@ -16,9 +17,19 @@ const createNew = async (data) => {
 
 const update = async (id, data) => {
     try {
-        const updataData = {
-            ...data,
-            updateAt: Date.now()
+        let updataData = {}
+        if (data.title) {
+            data.title = titleCase(data.title)
+            updataData = {
+                ...data,
+                title2: formatViToEn(data.title),
+                updateAt: Date.now()
+            }
+        } else {
+            updataData = {
+                ...data,
+                updateAt: Date.now()
+            }
         }
         const result = await ComicModel.update(id, updataData)
         return result
@@ -81,6 +92,42 @@ const getUnfinishedComics = async () => {
     }
 }
 
+const getRemovedComics = async (page) => {
+    try {
+        const result = await ComicModel.getRemovedComics(page)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const remove = async (id) => {
+    try {
+        const result = await ComicModel.remove(id)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const removeAll = async () => {
+    try {
+        const result = await ComicModel.removeAll()
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const search = async (key, page) => {
+    try {
+        const result = await ComicModel.search(key, page)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ComicService = {
     createNew,
     update,
@@ -89,5 +136,9 @@ export const ComicService = {
     getAllComicOfTag,
     getQuantityPage,
     getFollownLike,
-    getUnfinishedComics
+    getUnfinishedComics,
+    getRemovedComics,
+    remove,
+    removeAll,
+    search
 }
