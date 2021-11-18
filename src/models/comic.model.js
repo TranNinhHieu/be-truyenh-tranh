@@ -1,11 +1,13 @@
 import Joi from 'joi'
 import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
+import { formatViToEn, titleCase } from '../utilities/formatData'
 // Define Comic collection
 const comicCollectionName = 'comics'
 const comicCollectionSchema = Joi.object({
     number: Joi.number().default(0),
     title: Joi.string().required().min(3).max(100).trim(),
+    title2: Joi.string().default('').trim(),
     description: Joi.string().default('Đang cập nhật'),
     tagID: Joi.array().items(Joi.string()).required(),
     thumbnail: Joi.string().required(),
@@ -24,9 +26,13 @@ const validateSchema = async (data) => {
 const createNew = async (data) => {
     try {
         const value = await validateSchema(data)
+        const title = titleCase(value.title)
+        const title2 = formatViToEn(value.title)
         const tagID = value.tagID.map(tag => ObjectID(tag))
         const valueValidated = {
             ...value,
+            title: title,
+            title2: title2,
             tagID: tagID,
             createAt: Date.now()
         }
@@ -188,6 +194,60 @@ const getUnfinishedComics = async () => {
     }
 }
 
+const getRemovedComics = async (page) => {
+    try {
+        const comics = getDB().collection(comicCollectionName).find({
+            _destroy: true
+        }, { projection: { number: 1, title: 1, thumbnail: 1 } }).sort({ updateAt: -1 }).toArray()
+
+        const begin = (page-1)*24
+        const end = page*24
+        const result = comics.slice(begin, end)
+        return { comics: result, quatitypage:  Math.ceil(comics.length/12) }
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+const remove = async (id) => {
+    try {
+        const comic = await getDB().collection(comicCollectionName).deleteOne({
+            _id: ObjectID(id),
+            _destroy: true
+        })
+        const chapter = await getDB().collection('chapters').deleteMany({
+            comicID: id
+        })
+        return { comic: comic, chapter: chapter }
+    } catch (error) {
+        throw new Error
+    }
+}
+
+const removeAll = async () => {
+    try {
+        const result = await getDB().collection(comicCollectionName).deleteMany({ _destroy: true })
+        return result
+    } catch (error) {
+        throw new Error
+    }
+}
+
+const search = async (key, page) => {
+    try {
+        const comics = await getDB().collection(comicCollectionName).find({
+            title2: new RegExp(key, 'i'),
+            _destroy: false
+        }, { projection: { number: 1, title: 1, thumbnail: 1, createAt: 1 } }).sort({ createAt: -1 }).toArray()
+
+        const end = page*12
+        const result = comics.slice(0, end)
+        return { comics: result, quatitypage:  Math.ceil(comics.length/12) }
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ComicModel = {
     createNew,
     update,
@@ -196,5 +256,9 @@ export const ComicModel = {
     getAllComicOfTag,
     getQuantityPage,
     getFollownLike,
-    getUnfinishedComics
+    getUnfinishedComics,
+    getRemovedComics,
+    remove,
+    removeAll,
+    search
 }

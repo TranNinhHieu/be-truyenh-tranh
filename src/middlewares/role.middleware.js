@@ -2,7 +2,8 @@ import { HttpStatusCode } from '../utilities/constants'
 
 const isAdmin = async (req, res, next) => {
     try {
-        const { role } = req.params || req.query
+        const role = req.params.role || req.query.role
+
         if (role)
             next()
         else return res.status(HttpStatusCode.BAD_REQUEST).json({

@@ -95,6 +95,7 @@ const getQuantityChapter = async (comicID) => {
 const getNewComics = async () => {
     try {
         const result = await getDB().collection(chapterCollectionName).aggregate([
+            { $match: { _destroy: false } },
             {
                 $lookup: {
                     from: 'comics',

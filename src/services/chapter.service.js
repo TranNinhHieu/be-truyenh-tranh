@@ -5,8 +5,13 @@ const chapterCollectionName = 'chapters'
 
 const createNew = async (data) => {
     try {
-        const number = await getDB().collection(chapterCollectionName).find({ comicID: data.comicID, _destroy: false }).count()
-        data.chap = number + 1
+        let number = null
+        if (data.chap*1 === 0) {
+            number = await getDB().collection(chapterCollectionName).find({ comicID: data.comicID, _destroy: false }).count()
+            data.chap = number + 1
+        } else {
+            data.chap = data.chap*1
+        }
         const result = await ChapterModel.createNew(data)
         return result
     } catch (error) {
@@ -62,7 +67,6 @@ const getNewComics = async () => {
         throw new Error(error)
     }
 }
-
 
 export const ChapterService = {
     createNew,

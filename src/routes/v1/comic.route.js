@@ -7,10 +7,21 @@ import { ComicValidation } from '../../validations/comic.validation'
 
 const router = express.Router()
 
-router.route('/:role')
+router.route('/')
     .post(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ComicValidation.createNew, ComicController.createNew)
 router.route('/:id')
     .put(ComicValidation.update, ComicController.update)
+router.route('/update-remove/:id')
+    .put(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ComicValidation.update, ComicController.update)
+router.route('/remove/:id')
+    .delete(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ComicController.remove)
+router.route('/remove-all')
+    .delete(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ComicController.removeAll)
+
+router.route('/search')
+    .get(ComicController.search)
+router.route('/removed-comics/:page')
+    .get(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ComicController.getRemovedComics)
 router.route('/tag')
     .get(ComicController.getAllComicOfTag)
 router.route('/unfinished-comics')
