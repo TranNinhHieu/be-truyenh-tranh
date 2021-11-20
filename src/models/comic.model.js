@@ -2,6 +2,7 @@ import Joi from 'joi'
 import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
 import { formatViToEn, titleCase } from '../utilities/formatData'
+import { ChapterModel } from './chapter.model'
 // Define Comic collection
 const comicCollectionName = 'comics'
 const comicCollectionSchema = Joi.object({
@@ -209,6 +210,22 @@ const getRemovedComics = async (page) => {
     }
 }
 
+const softRemove = async (id) => {
+    try {
+        const comic = await getDB().collection(comicCollectionName).findOneAndUpdate(
+            { _id: ObjectID(id) },
+            { $set: { 'updateAt': Date.now(), '_destroy': true } },
+            { returnOriginal: false }
+        )
+        const chapters = await ChapterModel.updateMany(id)
+
+        return { comic, chapters }
+
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 const remove = async (id) => {
     try {
         const comic = await getDB().collection(comicCollectionName).deleteOne({
@@ -260,5 +277,6 @@ export const ComicModel = {
     getRemovedComics,
     remove,
     removeAll,
-    search
+    search,
+    softRemove
 }

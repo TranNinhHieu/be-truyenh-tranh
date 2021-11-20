@@ -101,6 +101,15 @@ const getRemovedComics = async (page) => {
     }
 }
 
+const softRemove = async (id) => {
+    try {
+        const result = await ComicModel.softRemove(id)
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 const remove = async (id) => {
     try {
         const result = await ComicModel.remove(id)
@@ -140,5 +149,6 @@ export const ComicService = {
     getRemovedComics,
     remove,
     removeAll,
-    search
+    search,
+    softRemove
 }
