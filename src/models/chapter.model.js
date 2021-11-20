@@ -122,11 +122,25 @@ const getNewComics = async () => {
     }
 }
 
+const updateMany = async (comicID) => {
+    try {
+        const result = await getDB().collection(chapterCollectionName).updateMany(
+            { comicID: comicID },
+            { $set: { 'updateAt:': Date.now(), '_destroy': true } },
+            { returnOriginal: false }
+        )
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const ChapterModel = {
     createNew,
     update,
     getAllChapterOfComic,
     getFullChapter,
     getQuantityChapter,
-    getNewComics
+    getNewComics,
+    updateMany
 }

@@ -7,11 +7,12 @@ const userCollectionName = 'users'
 const userCollectionSchema = Joi.object({
     name: Joi.string().required().min(5).max(50).trim(),
     email: Joi.string().required().min(15).max(50).trim(),
-    password: Joi.string().required().min(8).trim(),
-    avatar: Joi.string().default(''),
+    password: Joi.string().required().min(8),
+    avatar: Joi.string().default('https://res.cloudinary.com/no-music-no-life/image/upload/v1637370860/avatar-user-higico_dfrmov.jpg'),
     isAdmin: Joi.boolean().default(false),
     like: Joi.array().items(Joi.string()).default([]),
     follow: Joi.array().items(Joi.string()).default([]),
+    resetLink: Joi.string().default(''),
     createAt: Joi.date().timestamp().default(Date.now()),
     updateAt: Joi.date().timestamp().default(null),
     _destroy: Joi.boolean().default(false)
@@ -326,6 +327,16 @@ const getQuantityPageFollowedComics = async (userID) => {
     }
 }
 
+const getResetLink = async (userID) => {
+    try {
+        const result = await getDB().collection(userCollectionName).findOne(
+            { _id: ObjectID(userID), _destroy: false },
+            { projection: { resetLink: 1 } })
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
 export const UserModel = {
     login,
     getFullUser,
@@ -338,5 +349,6 @@ export const UserModel = {
     getLikedComics,
     getFollowedComics,
     getQuantityPageFollowedComics,
-    getQuantityPageLikedComics
+    getQuantityPageLikedComics,
+    getResetLink
 }

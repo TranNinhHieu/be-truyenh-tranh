@@ -23,6 +23,26 @@ const generateToken = (user, secretSignature, tokenLife) => {
     })
 }
 
+const createActiveToken = (user, secretSignature, tokenLife) => {
+    return new Promise((resolve, reject) => {
+
+        // Thực hiện ký và tạo token
+        sign(
+            { data: user },
+            secretSignature,
+            {
+                algorithm: 'HS256',
+                expiresIn: tokenLife
+            },
+            (error, token) => {
+                if (error) {
+                    return reject(error)
+                }
+                resolve(token)
+            })
+    })
+}
+
 const verifyToken = (token, secretKey) => {
     return new Promise((resolve, reject) => {
         verify(token, secretKey, (error, decoded) => {
@@ -36,5 +56,6 @@ const verifyToken = (token, secretKey) => {
 
 export const jwtHelper = {
     verifyToken,
-    generateToken
+    generateToken,
+    createActiveToken
 }

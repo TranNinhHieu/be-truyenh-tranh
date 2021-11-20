@@ -8,17 +8,15 @@ import { UserValidation } from '../../validations/user.validation'
 
 const router = express.Router()
 
-router.route('/login')
-    .post(UserValidation.login, UserController.login)
-
-router.route('/google-login')
-    .post(UserController.googleLogin)
-
-router.route('/refresh-token')
-    .post(UserController.refreshToken)
-
-router.route('/logout')
-    .get(UserController.logout)
+router.route('/login').post(UserValidation.login, UserController.login)
+router.route('/google-login').post(UserController.googleLogin)
+router.route('/refresh-token').post(UserController.refreshToken)
+router.route('/register').post(UserValidation.register, UserController.register)
+router.route('/forgot-password').post(UserController.forgotPassword)
+router.route('/confirm-token').get(UserController.confirmToken)
+router.route('/reset-password').put(UserController.resetPassword)
+router.route('/verify-email/:verify').get(UserController.verifyEmail)
+router.route('/logout').get(UserController.logout)
 
 router.route('/follow')
     .put(AuthMiddleware.isAuth, UserController.updateFollowComic)

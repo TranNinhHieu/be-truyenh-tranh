@@ -115,6 +115,19 @@ const getRemovedComics = async (req, res) => {
     }
 }
 
+const softRemove = async (req, res) => {
+    try {
+        const { id } = req.params
+        const result = await ComicService.softRemove(id)
+
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
 const remove = async (req, res) => {
     try {
         const { id } = req.params
@@ -165,5 +178,6 @@ export const ComicController = {
     getRemovedComics,
     remove,
     removeAll,
-    search
+    search,
+    softRemove
 }
