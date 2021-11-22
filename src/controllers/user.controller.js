@@ -6,6 +6,7 @@ import { mailHelper } from '../helpers/mail.helper'
 import { OAuth2Client } from 'google-auth-library'
 import bcrypt from 'bcrypt'
 import { UserModel } from '../models/user.model'
+import { generatePassword } from '../utilities/generatePassword'
 
 const client = new OAuth2Client(env.GOOGLE_CLIENT_ID)
 const CLIENT_URL = process.env.NODE_ENV === 'production' ? 'https://comic-riverdev-api.herokuapp.com' : 'http://localhost:8080'
@@ -325,25 +326,12 @@ const forgotPassword = async (req, res) => {
         if (!checkUser)
             return res.status(HttpStatusCode.BAD_REQUEST).json({ message: 'This email does not exist!' })
 
-        const activationToken = await jwtHelper.createActiveToken(checkUser, env.ACTIVE_TOKEN_SECRET, env.ACTIVE_TOKEN_LIFE)
-        const url = `${CLIENT_URL}/v1/user/confirm-token?token=${activationToken}&email=${email}`
-        mailHelper.sendMail(req.body.email, url, 'Reset password')
+        const password = generatePassword()
+        const passwordHash = await bcrypt.hash(password, 12)
+        await UserModel.update(checkUser._id, { password, passwordHash })
+        mailHelper.sendMail(email, 'javascript:void(0)', passwordHash)
+        res.status(HttpStatusCode.OK).json({ message: 'Password has been reset, check email to take it !' })
 
-        res.status(HttpStatusCode.OK).json({ token: activationToken, message: 'Please check email to verify!' })
-
-    } catch (error) {
-        res.status(HttpStatusCode.INTERNAL_SERVER).json({
-            errors: error.message
-        })
-    }
-}
-
-const confirmToken = async (req, res) => {
-    try {
-        const { token, email } = req.query
-        const checkUser = await UserService.checkExist(email)
-        await UserModel.update(checkUser._id, { resetLink: token })
-        res.status(HttpStatusCode.OK).json({ message: 'Verified!' })
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
             errors: error.message
@@ -354,19 +342,22 @@ const confirmToken = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
 
-        const { password, verify } = req.body
+        const { password, confirmPassword } = req.body
+        const { id } = req.params
+
+        if ( password.length < 8 || confirmPassword.length < 8 )
+            return res.status(HttpStatusCode.BAD_REQUEST).json({
+                message: 'Password must be at least 8 characters !'
+            })
+        if (password !== confirmPassword)
+            return res.status(HttpStatusCode.BAD_REQUEST).json({
+                message: 'Confirm password does not match !'
+            })
 
         const passwordHash = await bcrypt.hash(password, 12)
+        await UserModel.update(id, { password: passwordHash })
+        res.status(HttpStatusCode.OK).json({ message: 'Password has been changed!' })
 
-        const decode = await jwtHelper.verifyToken(verify, env.ACTIVE_TOKEN_SECRET)
-
-        const token = await UserModel.getResetLink(decode.data._id)
-
-        if (token.resetLink === verify) {
-            await UserModel.update(decode.data._id, { password: passwordHash, resetLink: '' })
-            res.status(HttpStatusCode.OK).json({ message: 'Password has been changed!' })
-        } else
-            res.status(HttpStatusCode.OK).json({ message: 'Reset link expired or incorrect!' })
 
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -393,6 +384,5 @@ export const UserController = {
     register,
     verifyEmail,
     forgotPassword,
-    resetPassword,
-    confirmToken
+    resetPassword
 }

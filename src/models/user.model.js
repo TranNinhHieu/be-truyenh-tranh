@@ -12,7 +12,6 @@ const userCollectionSchema = Joi.object({
     isAdmin: Joi.boolean().default(false),
     like: Joi.array().items(Joi.string()).default([]),
     follow: Joi.array().items(Joi.string()).default([]),
-    resetLink: Joi.string().default(''),
     createAt: Joi.date().timestamp().default(Date.now()),
     updateAt: Joi.date().timestamp().default(null),
     _destroy: Joi.boolean().default(false)
@@ -29,8 +28,8 @@ const createNew = async (data) => {
             ...value,
             createAt: Date.now()
         }
-        const result = await getDB().collection(userCollectionName).insertOne(valueValidated)
-        return result
+        await getDB().collection(userCollectionName).insertOne(valueValidated)
+        return 'Successfull verified!'
     } catch (error) {
         throw new Error(error)
     }
