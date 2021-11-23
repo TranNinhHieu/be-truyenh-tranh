@@ -252,6 +252,9 @@ const removeAll = async () => {
 
 const search = async (key, page) => {
     try {
+        if (key === '')
+            return { comics: [], quantityPage: 0 }
+        key = key.trim()
         const comics = await getDB().collection(comicCollectionName).find({
             title2: new RegExp(key, 'i'),
             _destroy: false
@@ -259,7 +262,7 @@ const search = async (key, page) => {
 
         const end = page*12
         const result = comics.slice(0, end)
-        return { comics: result, quatitypage:  Math.ceil(comics.length/12) }
+        return { comics: result, quantityPage:  Math.ceil(comics.length/12) }
     } catch (error) {
         throw new Error(error)
     }
