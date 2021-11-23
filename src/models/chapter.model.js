@@ -126,7 +126,7 @@ const updateMany = async (comicID) => {
     try {
         const result = await getDB().collection(chapterCollectionName).updateMany(
             { comicID: comicID },
-            { $set: { 'updateAt:': Date.now(), '_destroy': true } },
+            { $set: { 'updateAt': Date.now(), '_destroy': true } },
             { returnOriginal: false }
         )
         return result
