@@ -329,7 +329,7 @@ const forgotPassword = async (req, res) => {
         const password = generatePassword()
         const passwordHash = await bcrypt.hash(password, 12)
         await UserModel.update(checkUser._id, { password: passwordHash })
-        mailHelper.sendMail(email, 'javascript:void(0)', passwordHash)
+        mailHelper.sendMail(email, 'javascript:void(0)', password)
         res.status(HttpStatusCode.OK).json({ message: 'Password has been reset, check email to take it !' })
 
     } catch (error) {
