@@ -1,4 +1,5 @@
 import { ComicModel } from '../models/comic.model'
+import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
 import { formatViToEn, titleCase } from '../utilities/formatData'
 
@@ -26,10 +27,18 @@ const update = async (id, data) => {
                 updateAt: Date.now()
             }
         } else {
-            updataData = {
-                ...data,
-                updateAt: Date.now()
-            }
+            if (data.tagID) {
+                const tagID = data.tagID.map(tag => ObjectID(tag))
+                updataData = {
+                    ...data,
+                    tagID: tagID,
+                    updateAt: Date.now()
+                }
+            } else
+                updataData = {
+                    ...data,
+                    updateAt: Date.now()
+                }
         }
         const result = await ComicModel.update(id, updataData)
         return result
