@@ -5,7 +5,7 @@ import { getDB } from '../config/mongodb'
 const chapterCollectionName = 'chapters'
 const chapterCollectionSchema = Joi.object({
     comicID: Joi.string().required(),
-    chap: Joi.number().default(0),
+    chap: Joi.number().required(),
     image: Joi.array().items(Joi.string()).required(),
     createAt: Joi.date().timestamp().default(Date.now()),
     updateAt: Joi.date().timestamp().default(null),
