@@ -2,6 +2,7 @@ import express from 'express'
 import { HttpStatusCode } from '../../utilities/constants'
 import { chapterRoutes } from './chapter.route'
 import { comicRoutes } from './comic.route'
+import { notificationRoutes } from './notification.route'
 import { tagRoutes } from './tag.route'
 import { userRoutes } from './user.route'
 
@@ -21,4 +22,8 @@ router.use('/tags', tagRoutes)
 
 /*User APIs*/
 router.use('/user', userRoutes)
+
+/*Notificatio APIS*/
+router.use('/notification', notificationRoutes)
+
 export const apiV1 = router

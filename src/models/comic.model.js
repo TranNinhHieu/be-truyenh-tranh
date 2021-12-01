@@ -3,6 +3,7 @@ import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
 import { formatViToEn, titleCase } from '../utilities/formatData'
 import { ChapterModel } from './chapter.model'
+import { NotificationModel } from './notification.model'
 // Define Comic collection
 const comicCollectionName = 'comics'
 const comicCollectionSchema = Joi.object({
@@ -14,7 +15,7 @@ const comicCollectionSchema = Joi.object({
     thumbnail: Joi.string().required(),
     author: Joi.string().default('Đang cập nhật'),
     status: Joi.string().default('Chưa hoàn thành'),
-    view: Joi.number().default(0),
+    views: Joi.number().default(0),
     createAt: Joi.date().timestamp().default(Date.now()),
     updateAt: Joi.date().timestamp().default(null),
     _destroy: Joi.boolean().default(false)
@@ -218,6 +219,7 @@ const softRemove = async (id) => {
             { returnOriginal: false }
         )
         const chapters = await ChapterModel.updateMany(id)
+        await NotificationModel.removeWithComic(id, null)
 
         return { comic, chapters }
 

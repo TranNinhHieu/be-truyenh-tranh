@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { ObjectID } from 'mongodb'
 import { getDB } from '../config/mongodb'
+import { NotificationModel } from './notification.model'
 // Define Chapter collection
 const chapterCollectionName = 'chapters'
 const chapterCollectionSchema = Joi.object({
@@ -23,6 +24,27 @@ const createNew = async (data) => {
             ...value,
             createAt: Date.now()
         }
+
+        const userArr = await getDB().collection('users').find({
+            follow: ObjectID(valueValidated.comicID),
+            _destroy: false
+        }).toArray()
+
+        const comic = await getDB().collection('comics').findOne({
+            _id: ObjectID(valueValidated.comicID),
+            _destroy: false
+        })
+
+        userArr.map( async (user) => {
+            const notification = {
+                comicID: valueValidated.comicID,
+                userID: user._id.toString(),
+                chap: valueValidated.chap,
+                content: `<b>${comic.title}</b> đã thêm chương mới.`
+            }
+            await NotificationModel.createNew(notification)
+        })
+
         const result = await getDB().collection(chapterCollectionName).insertOne(valueValidated)
         return result
 
@@ -38,6 +60,11 @@ const update = async (id, data) => {
             { $set: data },
             { returnOriginal: false }
         )
+        if (data._destroy === true) {
+            const chapter = await getDB().collection(chapterCollectionName).findOne(
+                { _id: ObjectID(id), _destroy: true })
+            await NotificationModel.removeWithComic(chapter.comicID, chapter.chap)
+        }
         return result
 
     } catch (error) {
