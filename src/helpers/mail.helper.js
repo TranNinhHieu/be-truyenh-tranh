@@ -25,21 +25,21 @@ const sendMail = async (toEmail, url, text) => {
     })
 
     let mailOptions = {}
-    if (text === 'Xác minh')
+    if (url)
         mailOptions = {
             from: `HiGiCo Comic <${env.SENDER_EMAIL_ADDRESS}>`,
             to: toEmail,
             subject: 'Xác nhận tài khoản',
             html: `
-            <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;text-align:center;">
+            <form method="POST" action=${url} style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;text-align:center;">
             <h2 style="text-align: center; text-transform: uppercase;color: #fecf4b;">Chào mừng bạn đến với HiGiCo Comic!</h2>
             <p>
                 Bạn vui lòng click vào nút bên dưới để xác nhận tài khoản.
             </p>
-            
-            <a href=${url} style="background: #fa62ff; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;border-radius:0.5rem;font-weight: bold;box-shadow:0 3px 6px #fa62ff;text-transform: uppercase">${text}</a>
+            <input type="text" name="verify" style="display: none" readOnly value="${text}"></input>
+            <input type="submit" value="Xác minh" style="background: #fa62ff; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;border-radius:0.5rem;font-weight: bold;box-shadow:0 3px 6px #fa62ff;text-transform: uppercase;cursor: pointer; outline: none;border: none"></input>
         
-            </div>`
+          </form>`
         }
     else
         mailOptions = {

@@ -283,9 +283,9 @@ const register = async (req, res) => {
         }
 
         const activationToken = await jwtHelper.createActiveToken(newUser, env.ACTIVE_TOKEN_SECRET, env.ACTIVE_TOKEN_LIFE)
-        const url = `${CLIENT_URL}/v1/user/verify-email/${activationToken}`
+        const url = `${CLIENT_URL}/v1/user/verify-email`
 
-        mailHelper.sendMail(req.body.email, url, 'Xác minh')
+        mailHelper.sendMail(req.body.email, url, activationToken)
 
         res.status(HttpStatusCode.OK).json({ message: 'Register success! Please activate your email to start.' })
 
@@ -299,15 +299,15 @@ const register = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
 
-        const { verify } = req.params
+        const { verify } = req.body
 
         const decode = await jwtHelper.verifyToken(verify, env.ACTIVE_TOKEN_SECRET)
         const userData = decode.data
         const checkUser = await UserService.checkExist(userData.email)
-        let result = 'Already vefified!'
+
         if (!checkUser)
-            result = await UserModel.createNew(userData)
-        res.status(HttpStatusCode.OK).json(result)
+            await UserModel.createNew(userData)
+        res.redirect('https://comic-riverdev-web.web.app/login')
 
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -329,7 +329,7 @@ const forgotPassword = async (req, res) => {
         const password = generatePassword()
         const passwordHash = await bcrypt.hash(password, 12)
         await UserModel.update(checkUser._id, { password: passwordHash })
-        mailHelper.sendMail(email, 'javascript:void(0)', password)
+        mailHelper.sendMail(email, null, password)
         res.status(HttpStatusCode.OK).json({ message: 'Password has been reset, check email to take it !' })
 
     } catch (error) {
