@@ -14,7 +14,7 @@ router.route('/refresh-token').post(UserController.refreshToken)
 router.route('/register').post(UserValidation.register, UserController.register)
 router.route('/forgot-password').post(UserController.forgotPassword)
 router.route('/reset-password/:id').put(AuthMiddleware.isAuth, UserController.resetPassword)
-router.route('/verify-email/:verify').get(UserController.verifyEmail)
+router.route('/verify-email').post(UserController.verifyEmail)
 router.route('/logout').get(UserController.logout)
 
 router.route('/follow')
