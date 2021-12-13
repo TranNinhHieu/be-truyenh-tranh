@@ -48,6 +48,11 @@ const register = async (req, res, next) => {
                     error: true,
                     message: 'Password must be at least 8 charaters!'
                 })
+            if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/))
+                return res.status(HttpStatusCode.BAD_REQUEST).json({
+                    error: true,
+                    message: 'Password must have number, uppercase letter, lowercase letter and specical character!'
+                })
             if (password !== confirmPassword)
                 return res.status(HttpStatusCode.BAD_REQUEST).json({
                     error: true,
