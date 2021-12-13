@@ -349,6 +349,10 @@ const resetPassword = async (req, res) => {
             return res.status(HttpStatusCode.BAD_REQUEST).json({
                 message: 'Password must be at least 8 characters !'
             })
+        if (!password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/))
+            return res.status(HttpStatusCode.BAD_REQUEST).json({
+                message: 'Password must have number, uppercase letter, lowercase letter and specical character !'
+            })
         if (password !== confirmPassword)
             return res.status(HttpStatusCode.BAD_REQUEST).json({
                 message: 'Confirm password does not match !'
