@@ -10,10 +10,10 @@ const router = express.Router()
 
 router.route('/login').post(UserValidation.login, UserController.login)
 router.route('/google-login').post(UserController.googleLogin)
-router.route('/refresh-token').post(UserController.refreshToken)
+router.route('/refresh-token').get(UserController.refreshToken)
 router.route('/register').post(UserValidation.register, UserController.register)
 router.route('/forgot-password').post(UserController.forgotPassword)
-router.route('/reset-password/:id').put(AuthMiddleware.isAuth, UserController.resetPassword)
+router.route('/reset-password').put(AuthMiddleware.isAuth, UserController.resetPassword)
 router.route('/verify-email').post(UserController.verifyEmail)
 router.route('/logout').get(UserController.logout)
 
@@ -37,9 +37,6 @@ router.route('/like')
     .put(AuthMiddleware.isAuth, UserController.updateLikeComic)
     .get(AuthMiddleware.isAuth, UserController.likeStatus)
 
-router.route('/:userID')
-    .put(AuthMiddleware.isAuth, UserController.update)
-
 router.route('/remove-all-history')
     .delete(AuthMiddleware.isAuth, HistoryController.removeAllHistory)
 
@@ -57,7 +54,8 @@ router.route('/history')
     .post(AuthMiddleware.isAuth, HistoryController.addHistory)
     .get(AuthMiddleware.isAuth, HistoryController.getHistory)
 
-router.route('/:id')
+router.route('/')
     .get(AuthMiddleware.isAuth, UserController.getFullUser)
+    .put(AuthMiddleware.isAuth, UserController.update)
 
 export const userRoutes = router

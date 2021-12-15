@@ -3,8 +3,8 @@ import { HttpStatusCode } from '../utilities/constants'
 
 const updateStatus = async (req, res) => {
     try {
-        const { userID } = req.params
-        const result = await NotificationService.updateStatus(userID, req.body)
+        const { _id } = req.jwtDecoded.data
+        const result = await NotificationService.updateStatus(_id, req.body)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
@@ -16,8 +16,9 @@ const updateStatus = async (req, res) => {
 
 const getNotifications = async (req, res) => {
     try {
-        const { userID, page } = req.query
-        const result = await NotificationService.getNotifications(userID, page)
+        const { page } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await NotificationService.getNotifications(_id, page)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {

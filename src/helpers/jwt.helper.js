@@ -4,7 +4,8 @@ const generateToken = (user, secretSignature, tokenLife) => {
     return new Promise((resolve, reject) => {
         // Định nghĩa những thông tin của user mà bạn muốn lưu vào token ở đây
         const userData = {
-            _id: user._id
+            _id: user._id,
+            isAdmin: user.isAdmin
         }
         // Thực hiện ký và tạo token
         sign(
