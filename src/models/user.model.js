@@ -60,7 +60,7 @@ const login = async (data) => {
         if (!isMatch)
             return undefined
         else {
-            const userInfo = { _id: user._id }
+            const userInfo = { _id: user._id, isAdmin: user.isAdmin }
             return userInfo
         }
 

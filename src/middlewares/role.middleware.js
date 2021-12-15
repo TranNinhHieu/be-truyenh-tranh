@@ -2,9 +2,8 @@ import { HttpStatusCode } from '../utilities/constants'
 
 const isAdmin = async (req, res, next) => {
     try {
-        const role = req.params.role || req.query.role
-
-        if (role)
+        const { isAmin } = req.jwtDecoded.data
+        if (isAmin)
             next()
         else return res.status(HttpStatusCode.BAD_REQUEST).json({
             message: 'Admin role!'

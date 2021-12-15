@@ -25,7 +25,7 @@ const login = async (req, res) => {
                     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
                     secure: process.env.NODE_ENV === 'production' ? true : false
                 })
-                res.status(HttpStatusCode.OK).json({ accessToken, refreshToken })
+                res.status(HttpStatusCode.OK).json({ accessToken })
             } catch (error) {
                 return res.status(HttpStatusCode.INTERNAL_SERVER).json(error)
             }
@@ -50,11 +50,10 @@ const login = async (req, res) => {
 
 const refreshToken = async (req, res) => {
 
-    const refreshTokenFromClient = req.body.refreshToken || req.query.refreshToken
     const token = req.cookies.refreshToken
-    if (token === refreshTokenFromClient) {
+    if (token) {
         try {
-            const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, env.REFRESH_TOKEN_SECRET)
+            const decoded = await jwtHelper.verifyToken(token, env.REFRESH_TOKEN_SECRET)
 
             const userData = decoded.data
 
@@ -77,8 +76,8 @@ const refreshToken = async (req, res) => {
 
 const getFullUser = async (req, res) => {
     try {
-        const { id } = req. params
-        const userData = await UserService.getFullUser(id)
+        const { _id } = req.jwtDecoded.data
+        const userData = await UserService.getFullUser(_id)
         res.status(HttpStatusCode.OK).json(userData)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -161,12 +160,12 @@ const googleLogin = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { userID } = req.params
+        const { _id } = req.jwtDecoded.data
         const data = {
             ...req.body,
             updateAt: Date.now()
         }
-        const result = await UserModel.update(userID, data)
+        const result = await UserModel.update(_id, data)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -177,8 +176,9 @@ const update = async (req, res) => {
 
 const likeStatus = async (req, res) => {
     try {
-        const { userID, comicID } = req.query
-        const result = await UserModel.likeStatus(userID, comicID)
+        const { comicID } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await UserModel.likeStatus(_id, comicID)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -189,8 +189,9 @@ const likeStatus = async (req, res) => {
 
 const followStatus = async (req, res) => {
     try {
-        const { userID, comicID } = req.query
-        const result = await UserModel.followStatus(userID, comicID)
+        const { comicID } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await UserModel.followStatus(_id, comicID)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -201,8 +202,9 @@ const followStatus = async (req, res) => {
 
 const updateLikeComic = async (req, res) => {
     try {
-        const { userID, comicID } = req.query
-        const result = await UserModel.updateLikeComic(userID, comicID)
+        const { comicID } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await UserModel.updateLikeComic(_id, comicID)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -213,8 +215,9 @@ const updateLikeComic = async (req, res) => {
 
 const updateFollowComic = async (req, res) => {
     try {
-        const { userID, comicID } = req.query
-        const result = await UserModel.updateFollowComic(userID, comicID)
+        const { comicID } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await UserModel.updateFollowComic(_id, comicID)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -225,8 +228,9 @@ const updateFollowComic = async (req, res) => {
 
 const getLikedComics = async (req, res) => {
     try {
-        const { userID, page } = req.query
-        const result = await UserService.getLikedComics(userID, page)
+        const { page } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await UserService.getLikedComics(_id, page)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -237,8 +241,9 @@ const getLikedComics = async (req, res) => {
 
 const getFollowedComics = async (req, res) => {
     try {
-        const { userID, page } = req.query
-        const result = await UserService.getFollowedComics(userID, page)
+        const { page } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await UserService.getFollowedComics(_id, page)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -249,8 +254,8 @@ const getFollowedComics = async (req, res) => {
 
 const getQuantityPageLikedComics = async (req, res) => {
     try {
-        const { userID } = req.query
-        const result = await UserService.getQuantityPageLikedComics(userID)
+        const { _id } = req.jwtDecoded.data
+        const result = await UserService.getQuantityPageLikedComics(_id)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -261,8 +266,8 @@ const getQuantityPageLikedComics = async (req, res) => {
 
 const getQuantityPageFollowedComics = async (req, res) => {
     try {
-        const { userID } = req.query
-        const result = await UserService.getQuantityPageFollowedComics(userID)
+        const { _id } = req.jwtDecoded.data
+        const result = await UserService.getQuantityPageFollowedComics(_id)
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -343,7 +348,7 @@ const resetPassword = async (req, res) => {
     try {
 
         const { password, confirmPassword } = req.body
-        const { id } = req.params
+        const { _id } = req.jwtDecoded.data
 
         if ( password.length < 8 || confirmPassword.length < 8 )
             return res.status(HttpStatusCode.BAD_REQUEST).json({
@@ -359,7 +364,7 @@ const resetPassword = async (req, res) => {
             })
 
         const passwordHash = await bcrypt.hash(password, 12)
-        await UserModel.update(id, { password: passwordHash })
+        await UserModel.update(_id, { password: passwordHash })
         res.status(HttpStatusCode.OK).json({ message: 'Password has been changed!' })
 
 

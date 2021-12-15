@@ -16,8 +16,9 @@ const addHistory = async (req, res) => {
 
 const getHistory = async (req, res) => {
     try {
-        const { userID, page } = req.query
-        const result = await HistoryService.getHistory(userID, page)
+        const { page } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await HistoryService.getHistory(_id, page)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
@@ -30,8 +31,9 @@ const getHistory = async (req, res) => {
 
 const removeHistory = async (req, res) => {
     try {
-        const { userID, comicID, chap } = req.query
-        const result = await HistoryService.removeHistory(userID, comicID, chap)
+        const { comicID, chap } = req.query
+        const { _id } = req.jwtDecoded.data
+        const result = await HistoryService.removeHistory(_id, comicID, chap)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
@@ -44,8 +46,8 @@ const removeHistory = async (req, res) => {
 
 const removeAllHistory = async (req, res) => {
     try {
-        const { userID } = req.query
-        const result = await HistoryService.removeAllHistory(userID)
+        const { _id } = req.jwtDecoded.data
+        const result = await HistoryService.removeAllHistory(_id)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {
