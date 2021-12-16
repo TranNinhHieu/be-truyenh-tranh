@@ -94,8 +94,9 @@ const getNotifications = async (userID, page) => {
                 }
             }, {
                 $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ '$comic', 0 ] }, '$$ROOT' ] } }
-            }, { $project: { comic: 0, title2: 0, updateAt: 0, tagID: 0, description: 0, author: 0, status: 0, views: 0, _destroy: 0 } }
-        ]).toArray()
+            },
+            { $project: { comic: 0, title2: 0, updateAt: 0, tagID: 0, description: 0, author: 0, status: 0, views: 0, _destroy: 0 } }
+        ]).sort({ createAt: -1 }).toArray()
         const yet = arr.filter(item => item.seen !== true)
         const end = page*12
         const result = arr.slice(0, end)
