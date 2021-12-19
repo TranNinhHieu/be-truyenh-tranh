@@ -32,7 +32,7 @@ const getFullUser = async (id) => {
 const checkExist = async (email) => {
     try {
         const result = await getDB().collection('users').findOne(
-            { email: email },
+            { email: email, _destroy: false },
             { projection: { _id: 1 } }
         )
         return result
