@@ -326,16 +326,17 @@ const getQuantityPageFollowedComics = async (userID) => {
     }
 }
 
-const getResetLink = async (userID) => {
+const getAllUsers = async () => {
     try {
-        const result = await getDB().collection(userCollectionName).findOne(
-            { _id: ObjectID(userID), _destroy: false },
-            { projection: { resetLink: 1 } })
+        const result = await getDB().collection(userCollectionName).find(
+            { isAdmin: false, _destroy: false },
+            { projection: { name: 1, email: 1, createAt: 1, updateAt: 1 } }).toArray()
         return result
     } catch (error) {
         throw new Error(error)
     }
 }
+
 export const UserModel = {
     login,
     getFullUser,
@@ -349,5 +350,5 @@ export const UserModel = {
     getFollowedComics,
     getQuantityPageFollowedComics,
     getQuantityPageLikedComics,
-    getResetLink
+    getAllUsers
 }

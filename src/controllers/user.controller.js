@@ -375,6 +375,33 @@ const resetPassword = async (req, res) => {
     }
 }
 
+const removeUser = async (req, res) => {
+    try {
+        const { userID } = req.body
+        const data = {
+            updateAt: Date.now(),
+            _destroy: true
+        }
+        const result = await UserModel.update(userID, data)
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
+const getAllUsers = async (req, res) => {
+    try {
+        const result = await UserService.getAllUsers()
+        res.status(HttpStatusCode.OK).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            errors: error.message
+        })
+    }
+}
+
 export const UserController = {
     login,
     refreshToken,
@@ -393,5 +420,7 @@ export const UserController = {
     register,
     verifyEmail,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    removeUser,
+    getAllUsers
 }

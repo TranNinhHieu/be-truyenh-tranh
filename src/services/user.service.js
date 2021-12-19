@@ -77,6 +77,15 @@ const getQuantityPageFollowedComics = async (userID) => {
     }
 }
 
+const getAllUsers = async () => {
+    try {
+        const result = await UserModel.getAllUsers()
+        return result
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
 export const UserService = {
     login,
     getFullUser,
@@ -85,5 +94,6 @@ export const UserService = {
     getLikedComics,
     getFollowedComics,
     getQuantityPageFollowedComics,
-    getQuantityPageLikedComics
+    getQuantityPageLikedComics,
+    getAllUsers
 }

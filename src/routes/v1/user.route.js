@@ -3,6 +3,7 @@ import { CommentController } from '../../controllers/comment.controller'
 import { HistoryController } from '../../controllers/history.controller'
 import { UserController } from '../../controllers/user.controller'
 import { AuthMiddleware } from '../../middlewares/auth.middleware'
+import { RoleMiddleware } from '../../middlewares/role.middleware'
 import { CommentValidation } from '../../validations/comment.validation'
 import { UserValidation } from '../../validations/user.validation'
 
@@ -23,6 +24,12 @@ router.route('/follow')
 
 router.route('/comics/quantity-page-followed')
     .get(AuthMiddleware.isAuth, UserController.getQuantityPageFollowedComics)
+
+router.route('/remove-user')
+    .put(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, UserController.removeUser)
+
+router.route('/get-all-users')
+    .get(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, UserController.getAllUsers)
 
 router.route('/comics/quantity-page-liked')
     .get(AuthMiddleware.isAuth, UserController.getQuantityPageLikedComics)
