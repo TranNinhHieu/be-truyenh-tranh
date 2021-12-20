@@ -75,8 +75,8 @@ const getComic = async (page) => {
         const begin = (page - 1)*12
         const end = page*12
         const result = listComic.slice(begin, end)
-
-        return { comics: result, quantityComic: listComic.length }
+        const number = await getDB().collection(comicCollectionName).count()
+        return { comics: result, quantityComic: number }
 
     } catch (error) {
         throw new Error(error)
