@@ -64,5 +64,5 @@ router.route('/history')
 router.route('/')
     .get(AuthMiddleware.isAuth, UserController.getFullUser)
     .put(AuthMiddleware.isAuth, UserController.update)
-
+router.route('/signup').post(UserValidation.register, UserController.signup)
 export const userRoutes = router

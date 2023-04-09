@@ -51,8 +51,8 @@ const getHistory = async (userID, page) => {
         ]).sort({ createAt: -1 }).toArray()
         const begin = (page-1)*24
         const end = page*24
-        const result = history.slice(begin, end)
-        return { comics: result, quatitypage:  Math.ceil(history.length/12) }
+        const result = history.reverse().slice(begin, end)
+        return { comics: result, quatitypage:  Math.ceil(history.length/24) }
     } catch (error) {
         throw new Error
     }
@@ -60,7 +60,7 @@ const getHistory = async (userID, page) => {
 
 const removeHistory = async (userID, comicID, chap) => {
     try {
-        const result = await getDB().collection(historyCollectionName).deleteOne({
+        const result = await getDB().collection(historyCollectionName).deleteMany({
             userID: ObjectID(userID),
             comicID: ObjectID(comicID),
             chap: chap*1

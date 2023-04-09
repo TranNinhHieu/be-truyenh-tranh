@@ -24,12 +24,15 @@ const validateSchema = async (data) => {
 const createNew = async (data) => {
     try {
         const value = await validateSchema(data)
+
         const valueValidated = {
             ...value,
             createAt: Date.now()
         }
+
         await getDB().collection(userCollectionName).insertOne(valueValidated)
-        return 'Successfull verified!'
+        
+        return valueValidated
     } catch (error) {
         throw new Error(error)
     }
@@ -197,7 +200,7 @@ const getLikedComics = async (userID, page) => {
 
         const begin = (page-1)*12
         const end = page*12
-        const result = userData.slice(begin, end)
+        const result = userData.reverse().slice(begin, end)
         return result
     } catch (error) {
         throw new Error(error)
@@ -237,7 +240,7 @@ const getFollowedComics = async (userID, page) => {
 
         const begin = (page-1)*12
         const end = page*12
-        const result = userData.slice(begin, end)
+        const result = userData.reverse().slice(begin, end)
         return result
 
     } catch (error) {

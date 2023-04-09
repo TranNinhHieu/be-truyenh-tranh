@@ -1,7 +1,7 @@
 import { UserService } from '../services/user.service'
 import { HttpStatusCode } from '../utilities/constants'
 import { validateEmail } from '../utilities/formatData'
-
+import Joi from 'joi'
 const login = (req, res, next) => {
 
     try {
@@ -77,7 +77,33 @@ const register = async (req, res, next) => {
     }
 }
 
+
+const createNew = async (req, res, next) => {
+    const condition = Joi.object({
+        _id: Joi.string().required(),
+        name: Joi.string().required().min(3).max(16).trim(),
+        email: Joi.string()
+            .email({ minDomainSegments: 2, tlds: { allow: ['com'] } })
+            .required(),
+        avatar: Joi.string()
+            .uri({
+                scheme: [/\https?/],
+            })
+            .required(),
+    })
+    try {
+        await condition.validateAsync(req.body, { abortEarly: false })
+        next()
+    } catch (error) {
+        res.status(HttpStatusCode.BAD_REQUEST).json({
+            error: error.message,
+        })
+    }
+}
+
+
 export const UserValidation = {
     login,
-    register
+    register,
+    createNew
 }

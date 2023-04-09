@@ -85,6 +85,13 @@ const getAllUsers = async () => {
         throw new Error(error)
     }
 }
+const signup = async (data) => {
+    try {
+        return await UserModel.createNew(data)
+    } catch (error) {
+        throw new Error(error)
+    }
+}
 
 export const UserService = {
     login,
@@ -95,5 +102,6 @@ export const UserService = {
     getFollowedComics,
     getQuantityPageFollowedComics,
     getQuantityPageLikedComics,
-    getAllUsers
+    getAllUsers,
+    signup
 }

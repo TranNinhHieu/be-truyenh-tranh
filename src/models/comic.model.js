@@ -74,7 +74,11 @@ const getComic = async (page) => {
             .sort({ createAt: -1 }).toArray()
         const begin = (page - 1)*12
         const end = page*12
-        const result = listComic.slice(begin, end)
+        let result = listComic.slice(begin, end)
+        
+        if(Number(page)===0 ){ 
+            const comics= await getDB().collection(comicCollectionName).find({ _destroy: false }).toArray()
+            result=comics }
         const number = await getDB().collection(comicCollectionName).count()
         return { comics: result, quantityComic: number }
 
@@ -104,7 +108,7 @@ const getDetailComic = async (id) => {
     }
 }
 
-const getAllComicOfTag = async (tagID, page) => {
+const getAllComicOfTag = async (tagID) => {
     try {
         const listComic = await getDB().collection(comicCollectionName)
             .find(
@@ -113,9 +117,10 @@ const getAllComicOfTag = async (tagID, page) => {
                     _destroy: false
                 },
                 { projection: { number: 1, title: 1, thumbnail: 1, createAt: 1 } }).sort({ createAt: -1 }).toArray()
-        const begin = (page-1)*12
-        const end = page*12
-        const result = listComic.slice(begin, end)
+        // const begin = (page-1)*12
+        // const end = page*12
+        // .slice(begin, end)
+        const result = listComic
         return result
     } catch (error) {
         throw new Error(error)
@@ -263,7 +268,10 @@ const search = async (key, page) => {
         }, { projection: { number: 1, title: 1, thumbnail: 1, createAt: 1 } }).sort({ createAt: -1 }).toArray()
 
         const end = page*12
-        const result = comics.slice(0, end)
+        let result = comics.slice(0, end)
+        if(Number(page) ===0){
+            result = comics
+        }
         return { comics: result, quantityPage:  Math.ceil(comics.length/12) }
     } catch (error) {
         throw new Error(error)

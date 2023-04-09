@@ -28,7 +28,7 @@ const update = async (req, res) => {
 
 const getComic = async (req, res) => {
     try {
-        const { page } = req.params
+        const { page } = req.query
         const result = await ComicService.getComic(page)
 
         res.status(HttpStatusCode.OK).json(result)
@@ -54,8 +54,8 @@ const getDetailComic = async (req, res) => {
 
 const getAllComicOfTag = async (req, res) => {
     try {
-        const { tagID, page } = req.query
-        const result = await ComicService.getAllComicOfTag(tagID, page)
+        const { tagID } = req.query
+        const result = await ComicService.getAllComicOfTag(tagID)
 
         res.status(HttpStatusCode.OK).json(result)
     } catch (error) {

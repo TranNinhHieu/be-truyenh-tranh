@@ -71,9 +71,9 @@ const getComments = async (comicID, page) => {
             { $project: { userID: 1, content: 1, 'user.name': 1, 'user.avatar': 1, createAt: 1 } },
             { $sort: { createAt: -1 } }
         ]).toArray()
-        const begin = (page - 1)*12
+        // const begin = (page - 1)*12
         const end = page*12
-        const result = listComment.slice(begin, end)
+        const result = listComment.slice(0, end)
         return result
     } catch (error) {
         throw new Error

@@ -290,9 +290,9 @@ const register = async (req, res) => {
         const activationToken = await jwtHelper.createActiveToken(newUser, env.ACTIVE_TOKEN_SECRET, env.ACTIVE_TOKEN_LIFE)
         const url = `${CLIENT_URL}/v1/user/verify-email`
 
-        mailHelper.sendMail(req.body.email, url, activationToken)
+        await  mailHelper.sendMail(req.body.email, url, activationToken)
 
-        res.status(HttpStatusCode.OK).json({ message: 'Register success! Please activate your email to start.' })
+        await  res.status(HttpStatusCode.OK).json({ message: 'Register success! Please activate your email to start.' })
 
     } catch (error) {
         res.status(HttpStatusCode.INTERNAL_SERVER).json({
@@ -402,6 +402,19 @@ const getAllUsers = async (req, res) => {
     }
 }
 
+const signup = async (req, res) => {
+    try {
+        const result = await UserService.signup(req.body)
+
+        res.status(HttpStatusCode.CREATED).json(result)
+    } catch (error) {
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({
+            error: error.message,
+        })
+    }
+}
+
+
 export const UserController = {
     login,
     refreshToken,
@@ -422,5 +435,6 @@ export const UserController = {
     forgotPassword,
     resetPassword,
     removeUser,
-    getAllUsers
+    getAllUsers,
+    signup
 }

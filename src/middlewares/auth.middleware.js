@@ -5,7 +5,7 @@ import { HttpStatusCode } from '../utilities/constants'
 const isAuth = async (req, res, next) => {
 
     // Lấy token được gửi lên từ phía client, thông thường tốt nhất là các bạn nên truyền token vào header
-    const tokenFromClient = req.body.token || req.query.token || req.headers['x-access-token']
+    const tokenFromClient = /*req.body.token || req.query.token ||*/ req.headers['x-access-token']
 
     if (tokenFromClient) {
         // Nếu tồn tại token

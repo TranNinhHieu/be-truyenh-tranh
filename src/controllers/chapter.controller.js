@@ -28,7 +28,7 @@ const update = async (req, res) => {
 
 const getAllChapterOfComic = async (req, res) => {
     try {
-        const { comicID } = req.params
+        const { comicID } = req.query
         const result = await ChapterService.getAllChapterOfComic(comicID)
 
         res.status(HttpStatusCode.OK).json(result)

@@ -20,7 +20,7 @@ const update = async (id, data) => {
     try {
         let updataData = {}
         if (data.title) {
-            data.title = titleCase(data.title)
+            // data.title = titleCase(data.title)
             updataData = {
                 ...data,
                 title2: formatViToEn(data.title),

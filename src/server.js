@@ -49,12 +49,12 @@ const bootServer = () => {
                 'https://comic-riverdev-api.herokuapp.com',
                 'http://localhost:3000',
                 'https://comic-riverdev-web.web.app',
-                'http://localhost:8080']
+                'http://localhost:5000']
         }
     })
 
-    httpServer.listen(env.APP_PORT || process.env.PORT, () => {
-        console.log(`Hello river, I'm running at port: ${process.env.PORT}/`)
+    httpServer.listen(5000, () => {
+        console.log(`Hello river, I'm running at port: ${5000}/`)
     })
 
     io.on('connection', (socket) => {

@@ -8,7 +8,7 @@ const REDIRECT_URL = 'https://developers.google.com/oauthplayground'
 const OAuth2Client = new OAuth2(env.GOOGLE_CLIENT_ID, env.GOOGLE_CLIENT_SECRET, REDIRECT_URL)
 OAuth2Client.setCredentials({ refresh_token: env.MAILING_SERVICE_REFRESH_TOKEN })
 
-const sendMail = async (toEmail, url, text) => {
+const sendMail = async (toEmail, url, text) =>{ try {
 
     const accessToken = await OAuth2Client.getAccessToken()
 
@@ -63,6 +63,9 @@ const sendMail = async (toEmail, url, text) => {
             return info
         transporter.close()
     })
-}
+} 
+catch(err) {
+    console.log('Phát tốt bụng  ', err)
+}}
 
 export const mailHelper = { sendMail }

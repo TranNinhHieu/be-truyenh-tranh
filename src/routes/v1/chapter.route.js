@@ -12,7 +12,7 @@ router.route('/')
 router.route('/:id')
     .put(AuthMiddleware.isAuth, RoleMiddleware.isAdmin, ChapterValidation.update, ChapterController.update)
 
-router.route('/comic/:comicID')
+router.route('/comic/')
     .get(ChapterController.getAllChapterOfComic)
 router.route('/new-comics')
     .get(ChapterController.getNewComics)
