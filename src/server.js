@@ -26,7 +26,7 @@ const bootServer = () => {
             credentials: true,
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
             origin: [
-                'https://comic-riverdev-api.herokuapp.com',
+                'https://be-truyenh-tranh.onrender.com',
                 'http://localhost:3000',
                 'https://comic-riverdev-web.web.app',
                 'http://localhost:8080']
@@ -46,7 +46,7 @@ const bootServer = () => {
             credentials: true,
             methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
             origin: [
-                'https://comic-riverdev-api.herokuapp.com',
+                'https://be-truyenh-tranh.onrender.com',
                 'http://localhost:3000',
                 'https://comic-riverdev-web.web.app',
                 'http://localhost:5000']
