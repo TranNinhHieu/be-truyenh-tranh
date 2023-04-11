@@ -5,13 +5,13 @@ export const HttpStatusCode = {
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     NOT_FOUND: 404,
-    INTERNAL_SERVER: 500,
+    INTERNAL_SERVER: 500
 }
 
-export const WHITELIST_DOMAINS = [
-    'http://localhost:8080',
+export const clientHost = [
     'http://localhost:3000',
-    'https://comic-riverdev-web.web.app',
-    'https://comic-riverdev-web.firebaseapp.com',
-    'https://comic-riverdev-api.herokuapp.com'
+    'https://todo-riverdev-application.web.app',
+    'https://todo-riverdev-application.firebaseapp.com'
 ]
+
+export const serverHost = 'https://be-truyenh-tranh.onrender.com'
