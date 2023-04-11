@@ -29,7 +29,7 @@ const bootServer = () => {
                 'https://be-truyenh-tranh.onrender.com',
                 'http://localhost:3000',
                 'https://comic-riverdev-web.web.app',
-                'https://truyenh-tranh.web.app/',
+                'https://truyenh-tranh.web.app',
                 'http://localhost:8080']
         })
     )
@@ -50,7 +50,7 @@ const bootServer = () => {
                 'https://be-truyenh-tranh.onrender.com',
                 'http://localhost:3000',
                 'https://comic-riverdev-web.web.app',
-                'https://truyenh-tranh.web.app/',
+                'https://truyenh-tranh.web.app',
                 'http://localhost:5000']
         }
     })
