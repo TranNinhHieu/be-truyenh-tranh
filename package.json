@@ -1,9 +1,16 @@
 {
+<<<<<<< HEAD
     "name": "comic-riverdev-api",
     "version": "1.0.0",
     "description": "APIs for comic clone app",
     "type": "module",
     "main": "src/server.js",
+=======
+    "name": "be",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+>>>>>>> 39e448acae47cbceaf202308bbbcaac5e572d562
     "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
       "eslint": "eslint src",
@@ -14,6 +21,7 @@
       "dev": "nodemon --exec ./node_modules/.bin/babel-node ./src/server.js",
       "start": "node ./build/src/server.js"
     },
+<<<<<<< HEAD
     "repository": {
       "type": "git",
       "url": "git+https://github.com/river248/comic-riverdev-api.git"
@@ -25,6 +33,10 @@
       "url": "https://github.com/river248/comic-riverdev-api/issues"
     },
     "homepage": "https://github.com/river248/comic-riverdev-api#readme",
+=======
+    "author": "",
+    "license": "ISC",
+>>>>>>> 39e448acae47cbceaf202308bbbcaac5e572d562
     "dependencies": {
       "@babel/runtime": "^7.15.4",
       "bcrypt": "^5.0.1",
@@ -40,7 +52,11 @@
       "jsonwebtoken": "^8.5.1",
       "mongodb": "^4.1.3",
       "nodemailer": "^6.7.1",
+<<<<<<< HEAD
       "socket.io": "^4.5.1"
+=======
+      "socket.io": "^4.3.1"
+>>>>>>> 39e448acae47cbceaf202308bbbcaac5e572d562
     },
     "devDependencies": {
       "@babel/cli": "^7.15.7",
@@ -50,6 +66,13 @@
       "@babel/plugin-transform-runtime": "^7.15.8",
       "@babel/preset-env": "^7.15.8",
       "eslint": "^8.0.1",
+<<<<<<< HEAD
       "nodemon": "^2.0.19"
     }
   }
+=======
+      "nodemon": "^2.0.13"
+    }
+  }
+  
+>>>>>>> 39e448acae47cbceaf202308bbbcaac5e572d562
