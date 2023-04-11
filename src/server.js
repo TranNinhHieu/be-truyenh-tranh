@@ -53,7 +53,7 @@ const bootServer = () => {
         }
     })
 
-    httpServer.listen(5000, () => {
+    httpServer.listen(env.APP_PORT || process.env.PORT||5000, () => {
         console.log(`Hello river, I'm running at port: ${5000}/`)
     })
 
