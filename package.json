@@ -2,8 +2,7 @@
   "name": "comic-riverdev-api",
   "version": "1.0.0",
   "description": "APIs for comic clone app",
-  "type":"module",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src",
@@ -45,11 +44,10 @@
   "devDependencies": {
     "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.8",
+    "@babel/eslint-parser": "^7.15.8",
     "@babel/node": "^7.15.8",
     "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
-    "babel-plugin-module-resolver": "^4.1.0",
-    "@babel/eslint-parser": "^7.15.8",
     "eslint": "^8.0.1",
     "nodemon": "^2.0.13"
   }
